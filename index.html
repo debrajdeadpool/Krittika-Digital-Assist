@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krittika Digital Assist - Professional Digital & Financial Services</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=aspect-ratio"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* --- Base & Font Styles --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a14;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Gradient Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 20%, rgba(79, 70, 229, 0.2), transparent 35%),
+                        radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.15), transparent 40%);
+            animation: gradient-move 25s ease-in-out infinite;
+            z-index: -1;
+            will-change: transform;
+        }
+
+        @keyframes gradient-move {
+            0%, 100% { transform: translate(-25%, -25%) rotate(0deg); }
+            50% { transform: translate(0, 0) rotate(180deg); }
+        }
+
+        /* --- Custom Cursor --- */
+        .custom-cursor {
+            position: fixed;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #818CF8;
+            border-radius: 50%;
+            left: 0;
+            top: 0;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease, transform 0.1s ease-out;
+            z-index: 9999;
+        }
+        .custom-cursor.grow {
+            width: 48px;
+            height: 48px;
+            background-color: rgba(130, 140, 248, 0.2);
+        }
+        .custom-cursor.hidden {
+            display: none;
+        }
+
+        /* --- Page Transitions --- */
+        .page-content {
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+            will-change: opacity, transform;
+        }
+        .page-content.fade-out {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* --- FAQ Accordion --- */
+        .faq-item .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+            padding: 0 1.5rem;
+        }
+        .faq-item.active .faq-answer {
+            max-height: 250px;
+            padding: 1.5rem;
+        }
+        .faq-item.active .plus-icon {
+            transform: rotate(45deg);
+        }
+        .faq-item .plus-icon {
+            transition: transform 0.4s ease-in-out;
+        }
+        
+        /* --- Testimonial Carousel --- */
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-350px * 6)); }
+        }
+        .testimonial-carousel-track {
+            animation: scroll 40s linear infinite;
+            display: flex;
+            width: calc(350px * 12);
+        }
+        .testimonial-carousel:hover .testimonial-carousel-track {
+            animation-play-state: paused;
+        }
+        
+        /* --- Blog Modal --- */
+        .blog-modal-content {
+            max-height: 80vh;
+            overflow-y: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .blog-modal-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* --- Animations & Effects --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition-delay: var(--delay, 0s);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .animated-card {
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            will-change: transform, box-shadow;
+            background-color: rgba(23, 23, 35, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .animated-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.25), 0 0 20px rgba(130, 140, 248, 0.4);
+            border-color: rgba(130, 140, 248, 0.5);
+        }
+
+        @keyframes border-glow {
+            0%, 100% { border-color: #6366F1; box-shadow: 0 0 25px rgba(99, 102, 241, 0.5); }
+            50% { border-color: #818CF8; box-shadow: 0 0 40px rgba(129, 140, 248, 0.6); }
+        }
+        .glowing-border {
+            animation: border-glow 4s infinite ease-in-out;
+        }
+
+        .nav-link {
+            position: relative;
+            padding: 4px 0;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: #818CF8;
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+        
+        .shine-button {
+            position: relative;
+            overflow: hidden;
+        }
+        .shine-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(110deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 60%);
+            transform: skewX(-25deg);
+            transition: left 0.7s ease-in-out;
+        }
+        .shine-button:hover::before {
+            left: 150%;
+        }
+
+        @keyframes text-glow {
+            0%, 100% { text-shadow: 0 0 5px rgba(199, 210, 254, 0.3), 0 0 10px rgba(165, 180, 252, 0.2); }
+            50% { text-shadow: 0 0 10px rgba(199, 210, 254, 0.4), 0 0 20px rgba(165, 180, 252, 0.3); }
+        }
+        .glowing-text {
+            animation: text-glow 4s infinite ease-in-out;
+        }
+        
+        /* Custom Select Dropdown Styling */
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+            padding-right: 2.5rem; /* Make space for the arrow */
+            color: white;
+        }
+        select option {
+            background-color: #1f2937; /* Dark background for options */
+            color: white;
+        }
+        
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .partner-logo {
+            transition: filter 0.3s ease;
+            filter: grayscale(100%);
+        }
+        .partner-logo:hover {
+            filter: grayscale(0%);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex flex-col min-h-screen">
+
+    <div class="custom-cursor"></div>
+
+    <!-- Header -->
+    <header class="bg-gray-900/80 backdrop-blur-xl fixed top-0 left-0 right-0 z-50 border-b border-gray-800/50 shadow-lg">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#" data-page="home" class="flex items-center space-x-3">
+                <div class="relative w-12 h-12 flex-shrink-0 rounded-full overflow-hidden border-2 border-indigo-500 bg-gray-800">
+                    <img src="https://i.postimg.cc/TYgp9y6h/edfdfsfsf-removebg-preview.png" alt="Krittika Digital Assist Logo" class="w-full h-full object-cover">
+                </div>
+                <span class="text-xl font-bold text-indigo-400 hidden sm:inline">Krittika Digital Assist</span>
+            </a>
+            <nav class="hidden md:flex space-x-8 items-center">
+                <a href="#about" data-page="home-about" class="nav-link text-gray-300 hover:text-indigo-400 transition duration-300">About</a>
+                <a href="#" data-page="services" class="nav-link text-gray-300 hover:text-indigo-400 transition duration-300">Services</a>
+                 <a href="#" data-page="blog" class="nav-link text-gray-300 hover:text-indigo-400 transition duration-300">Blog</a>
+                <a href="#contact" data-page="home-contact" class="nav-link text-gray-300 hover:text-indigo-400 transition duration-300">Contact</a>
+                <a href="#" id="signin-nav-link" class="shine-button border border-indigo-500 text-indigo-400 hover:bg-indigo-500 hover:text-white font-medium py-2 px-4 rounded-lg transition duration-300 transform hover:scale-105">
+                    Sign In
+                </a>
+            </nav>
+            <button id="mobile-menu-button" class="md:hidden text-gray-300 hover:text-white focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+            <a href="#about" data-page="home-about" class="block py-2 text-gray-300 hover:text-indigo-400">About</a>
+            <a href="#" data-page="services" class="block py-2 text-gray-300 hover:text-indigo-400">Services</a>
+            <a href="#" data-page="blog" class="block py-2 text-gray-300 hover:text-indigo-400">Blog</a>
+            <a href="#contact" data-page="home-contact" class="block py-2 text-gray-300 hover:text-indigo-400">Contact</a>
+            <a href="#" id="signin-mobile-link" class="shine-button block mt-2 border border-indigo-500 text-indigo-400 hover:bg-indigo-500 hover:text-white font-medium py-2 px-4 rounded-lg text-center transition duration-300">Sign In</a>
+        </div>
+    </header>
+
+    <main class="flex-grow pt-24">
+        <!-- Main Home Page Content -->
+        <div id="page-home" class="page-content">
+            <!-- Hero Section -->
+            <section id="hero" class="relative container mx-auto px-6 py-20 md:py-32">
+                 <div id="particles-js"></div>
+                 <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 text-center md:text-left mb-10 md:mb-0">
+                        <span class="text-indigo-400 font-semibold reveal" style="--delay: 0.1s;">Welcome to Krittika Digital Assist</span>
+                        <h1 class="text-5xl md:text-6xl font-extrabold mt-2 mb-4 reveal glowing-text bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 to-purple-400" style="--delay: 0.2s;">Your Partner in Digital & Financial Growth</h1>
+                        <p class="text-gray-400 text-lg max-w-lg mx-auto md:mx-0 mb-8 reveal" style="--delay: 0.4s;">
+                            We provide a comprehensive suite of digital and financial services, meticulously designed to support your personal and business growth in an increasingly connected world.
+                        </p>
+                        <div class="flex justify-center md:justify-start space-x-4 reveal" style="--delay: 0.5s;">
+                            <a href="#contact" data-page="home-contact" class="shine-button bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105">Get Started</a>
+                            <a href="#" data-page="services" class="shine-button bg-gray-700 hover:bg-gray-600 text-white font-medium py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105">Our Services</a>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 flex justify-center mt-10 md:mt-0 reveal" style="--delay: 0.3s;">
+                        <div class="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden bg-gray-800 border-4 border-indigo-500 shadow-2xl glowing-border">
+                            <img src="https://i.postimg.cc/TYgp9y6h/edfdfsfsf-removebg-preview.png" alt="Krittika Digital Assist" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Featured Services Section -->
+            <section id="featured-services" class="py-20">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-3xl font-bold text-center mb-12 reveal">Core Services</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="p-8 rounded-lg text-center animated-card reveal" style="--delay: 0.1s;">
+                            <div class="flex items-center justify-center h-16 w-16 rounded-full bg-blue-900/50 mx-auto mb-6"><img src="https://i.postimg.cc/XJM15mZN/documentation.png" alt="PAN Card Icon" class="w-10 h-10"></div>
+                            <h3 class="text-xl font-bold mb-2 text-blue-400">PAN Card Services</h3>
+                            <p class="text-gray-400">Fast, reliable, and NSDL-authorized PAN card applications and corrections.</p>
+                        </div>
+                        <div class="p-8 rounded-lg text-center animated-card reveal" style="--delay: 0.2s;">
+                            <div class="flex items-center justify-center h-16 w-16 rounded-full bg-teal-900/50 mx-auto mb-6"><img src="https://i.postimg.cc/zfT6xqYH/fingerprint.png" alt="AEPS Icon" class="w-10 h-10"></div>
+                            <h3 class="text-xl font-bold mb-2 text-teal-400">AEPS & Financial Inclusion</h3>
+                            <p class="text-gray-400">Empower your business with AEPS, Micro-ATMs, and other financial services.</p>
+                        </div>
+                        <div class="p-8 rounded-lg text-center animated-card reveal" style="--delay: 0.3s;">
+                            <div class="flex items-center justify-center h-16 w-16 rounded-full bg-green-900/50 mx-auto mb-6"><img src="https://i.postimg.cc/QxPzsFXW/mobile-banking.png" alt="Bank CSP Icon" class="w-10 h-10"></div>
+                            <h3 class="text-xl font-bold mb-2 text-green-400">Bank CSP Provider</h3>
+                            <p class="text-gray-400">Become a Customer Service Point and offer essential banking services.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Meet the Founder Section -->
+            <section id="about" class="py-20">
+                <div class="container mx-auto px-6 reveal">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-bold">Meet the Founder</h2>
+                    </div>
+                    <div class="group max-w-4xl mx-auto bg-gray-800/30 rounded-2xl shadow-2xl border border-gray-700/50 flex flex-col md:flex-row items-center overflow-hidden transition-all duration-500 hover:shadow-indigo-500/30 hover:border-indigo-500/50">
+                        <div class="md:w-2/5 flex-shrink-0 self-stretch overflow-hidden">
+                            <img src="https://i.postimg.cc/50FScwKg/Chat-GPT-Image-Jul-29-2025-10-13-03-PM-removebg-preview-2.png" alt="Krishnendu Dhara" class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105">
+                        </div>
+                        <div class="md:w-3/5 p-8 md:p-10 text-center md:text-left">
+                             <h3 class="text-3xl font-bold text-indigo-400 mb-2">Krishnendu Dhara</h3>
+                             <p class="text-gray-400 font-medium mb-6">Founder & CEO</p>
+                             <blockquote class="relative">
+                                <svg class="absolute -top-4 -left-6 w-16 h-16 text-gray-700/50" fill="currentColor" viewBox="0 0 32 32" aria-hidden="true">
+                                    <path d="M9.33 6.984h6.656l-2.813 9.328h-6.656l2.813-9.328zM22.656 6.984h6.656l-2.813 9.328h-6.656l2.813-9.328z"></path>
+                                </svg>
+                                <p class="text-gray-300 text-lg leading-relaxed mb-4 italic z-10 relative">
+                                    "Our mission is to bridge the gap between essential services and the people who need them most. In a world driven by technology, we believe that access to digital and financial tools should be simple, secure, and available to everyone."
+                                </p>
+                            </blockquote>
+                            <p class="text-gray-300 leading-relaxed mt-4">
+                                A visionary entrepreneur from <span class="font-semibold text-indigo-300">Purba Medinipur, West Bengal</span>, Krishnendu founded Krittika Digital Assist with a passion for empowering local communities. His commitment to reliability, transparency, and customer success is the cornerstone of our company.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testimonials Section -->
+            <section id="testimonials" class="py-20">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-3xl font-bold text-center mb-12 reveal">Trusted by Clients Across the Region</h2>
+                    <div class="testimonial-carousel relative w-full overflow-hidden">
+                        <div class="testimonial-carousel-track flex gap-x-8">
+                            <script>
+                                const generateStars = () => `<div class="flex items-center mb-2">${'<svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>'.repeat(5)}</div>`;
+                                const testimonials = [
+                                    { name: "Arijit Bose", role: "AEPS User", text: "The service was incredibly fast and professional. I got my PAN card without any hassle. Highly recommended!", initial: "A", color: "bg-purple-600" },
+                                    { name: "Priya Das", role: "Bank CSP Owner", text: "Setting up my Bank CSP was a breeze with their help. The team is knowledgeable and supportive.", initial: "P", color: "bg-blue-600" },
+                                    { name: "Sourav Chatterjee", role: "Shopkeeper", text: "The AEPS service has brought more customers to my shop. It's a great additional income source and very reliable.", initial: "S", color: "bg-teal-600" },
+                                    { name: "Bipasha Sen", role: "Entrepreneur", text: "I started my eco-friendly bag business with their biopolymer bags. The quality is fantastic!", initial: "B", color: "bg-pink-600" },
+                                    { name: "Mithun Roy", role: "Valued Client", text: "Needed a PAN card urgently for my son's admission. They got it done in record time. Amazing service!", initial: "M", color: "bg-orange-600" },
+                                    { name: "Sushmita Ghosh", role: "CSP Agent", text: "The Micro-ATM device is a game-changer. It's compact, the battery lasts forever, and it's so easy to use.", initial: "S", color: "bg-yellow-600" }
+                                ];
+                                const track = document.querySelector('.testimonial-carousel-track');
+                                track.innerHTML = [...testimonials, ...testimonials].map(t => `
+                                    <div class="flex-shrink-0 w-[320px] p-6 rounded-lg shadow-lg animated-card">
+                                        ${generateStars()}
+                                        <p class="text-gray-300 mb-4" style="min-height: 8rem;">${t.text}</p>
+                                        <div class="flex items-center">
+                                            <div class="w-12 h-12 rounded-full mr-4 flex items-center justify-center ${t.color} text-white font-bold text-xl">${t.initial}</div>
+                                            <div>
+                                                <p class="font-semibold text-white">${t.name}</p>
+                                                <p class="text-sm text-gray-400">${t.role}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('');
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Partners Section -->
+            <section id="partners" class="py-20">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-3xl font-bold text-center mb-12 reveal">Our Official Partners</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 items-center max-w-5xl mx-auto">
+                        <div class="p-6 rounded-lg flex flex-col items-center justify-center transition duration-300 h-40 animated-card reveal" style="--delay: 0s;"><img src="https://i.postimg.cc/jdRcW5YC/images-removebg-preview.png" alt="NSDL Logo" class="h-16 object-contain partner-logo"><p class="mt-4 font-semibold text-gray-300">NSDL</p></div>
+                        <div class="p-6 rounded-lg flex flex-col items-center justify-center transition duration-300 h-40 animated-card reveal" style="--delay: 0.1s;"><img src="https://i.postimg.cc/FsPy7Vxn/unnamed-removebg-preview.png" alt="Samadhan Web Solution Logo" class="h-16 object-contain partner-logo"><p class="mt-4 font-semibold text-gray-300 text-center">Samadhan Web</p></div>
+                        <div class="p-6 rounded-lg flex flex-col items-center justify-center transition duration-300 h-40 animated-card reveal" style="--delay: 0.2s;"><img src="https://i.postimg.cc/02HS828T/religare-enterpris-600-removebg-preview.png" alt="Religare Logo" class="h-16 object-contain partner-logo"><p class="mt-4 font-semibold text-gray-300">Religare</p></div>
+                        <div class="p-6 rounded-lg flex flex-col items-center justify-center transition duration-300 h-40 animated-card reveal" style="--delay: 0.3s;"><img src="https://i.postimg.cc/ZRZBfWcd/images-1-removebg-preview.png" alt="Fino Payments Bank Logo" class="h-16 object-contain partner-logo"><p class="mt-4 font-semibold text-gray-300">Fino Bank</p></div>
+                        <div class="p-6 rounded-lg flex flex-col items-center justify-center transition duration-300 h-40 col-span-2 md:col-span-1 animated-card reveal" style="--delay: 0.4s;"><img src="https://i.postimg.cc/jjjPKwNY/channels4-profile-removebg-preview.png" alt="Protean Logo" class="h-16 object-contain partner-logo"><p class="mt-4 font-semibold text-gray-300">Protean</p></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Redesigned YouTube Section -->
+            <section id="youtube" class="py-20">
+                <div class="container mx-auto px-6 reveal">
+                    <div class="relative rounded-2xl shadow-2xl p-8 md:p-12 overflow-hidden bg-gray-800/50 border border-gray-700/50">
+                        <div class="relative z-10 flex flex-col lg:flex-row items-center gap-8">
+                            <div class="lg:w-1/2 text-center lg:text-left">
+                                <h2 class="text-3xl font-bold mb-4 text-indigo-300">Knowledge & Insights on YouTube</h2>
+                                <p class="text-gray-400 mb-8">We provide clear, step-by-step tutorials and updates on essential digital services. Subscribe to stay informed and learn how to leverage these tools for your success.</p>
+                                <a href="https://youtube.com/@withkrishnendu?si=D4W02pZqTf-1mWSH" target="_blank" rel="noopener noreferrer" class="shine-button inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 text-lg transform hover:scale-105">Subscribe Now</a>
+                            </div>
+                            <div class="lg:w-1/2 w-full">
+                                <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-lg border-2 border-indigo-500/50">
+                                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/EI2zotmAanQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FAQ Section -->
+            <section id="faq" class="py-20">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-3xl font-bold text-center mb-12 reveal">Frequently Asked Questions</h2>
+                    <div class="max-w-3xl mx-auto">
+                        <div class="faq-item rounded-lg shadow-lg mb-4 animated-card reveal" style="--delay: 0.1s;"><button class="faq-question w-full text-left p-6 flex justify-between items-center"><span class="text-lg font-semibold">How long does it take to get a PAN card?</span><span class="plus-icon text-2xl">+</span></button><div class="faq-answer border-t border-gray-700"><p class="text-gray-400">Typically, a new PAN card is allotted within 48 hours. The physical card is delivered to your address in about 1-2 weeks.</p></div></div>
+                        <div class="faq-item rounded-lg shadow-lg mb-4 animated-card reveal" style="--delay: 0.2s;"><button class="faq-question w-full text-left p-6 flex justify-between items-center"><span class="text-lg font-semibold">What documents are required for an AEPS ID?</span><span class="plus-icon text-2xl">+</span></button><div class="faq-answer border-t border-gray-700"><p class="text-gray-400">You will need your Aadhaar card, PAN card, and proof of address. We will guide you through the entire KYC process.</p></div></div>
+                        <div class="faq-item rounded-lg shadow-lg mb-4 animated-card reveal" style="--delay: 0.3s;"><button class="faq-question w-full text-left p-6 flex justify-between items-center"><span class="text-lg font-semibold">Is there a fee for setting up a Bank CSP?</span><span class="plus-icon text-2xl">+</span></button><div class="faq-answer border-t border-gray-700"><p class="text-gray-400">Yes, there is a one-time setup fee which covers the device, training, and registration. Please contact us for the current pricing.</p></div></div>
+                        <div id="more-faqs" class="hidden">
+                            <div class="faq-item rounded-lg shadow-lg mb-4 animated-card"><button class="faq-question w-full text-left p-6 flex justify-between items-center"><span class="text-lg font-semibold">Can I get a correction done on my existing PAN card?</span><span class="plus-icon text-2xl">+</span></button><div class="faq-answer border-t border-gray-700"><p class="text-gray-400">Yes, we handle all types of PAN card corrections, including name, date of birth, and photo updates. The process is simple and we ensure it's done correctly through the NSDL portal.</p></div></div>
+                            <div class="faq-item rounded-lg shadow-lg mb-4 animated-card"><button class="faq-question w-full text-left p-6 flex justify-between items-center"><span class="text-lg font-semibold">What are the transaction limits for AEPS?</span><span class="plus-icon text-2xl">+</span></button><div class="faq-answer border-t border-gray-700"><p class="text-gray-400">Transaction limits for AEPS are set by the NPCI and can vary slightly between banks. Generally, the cash withdrawal limit is around ₹10,000 per transaction. We can provide you with the latest guidelines.</p></div></div>
+                            <div class="faq-item rounded-lg shadow-lg mb-4 animated-card"><button class="faq-question w-full text-left p-6 flex justify-between items-center"><span class="text-lg font-semibold">How much commission can I earn from recharges and bill payments?</span><span class="plus-icon text-2xl">+</span></button><div class="faq-answer border-t border-gray-700"><p class="text-gray-400">Commissions vary by operator and service. We offer a competitive commission structure that allows you to earn a good margin on every transaction. Contact us for a detailed commission chart.</p></div></div>
+                            <div class="faq-item rounded-lg shadow-lg mb-4 animated-card"><button class="faq-question w-full text-left p-6 flex justify-between items-center"><span class="text-lg font-semibold">Is the Micro-ATM device secure for transactions?</span><span class="plus-icon text-2xl">+</span></button><div class="faq-answer border-t border-gray-700"><p class="text-gray-400">Absolutely. Our Micro-ATM devices are PCI-DSS certified and use end-to-end encryption to ensure that all transaction data is completely secure, protecting both you and your customers.</p></div></div>
+                        </div>
+                        <div class="text-center mt-6 reveal" style="--delay: 0.4s;"><button id="show-more-faqs-btn" class="shine-button bg-gray-700 hover:bg-gray-600 text-white font-medium py-3 px-8 rounded-lg transition duration-300 transform hover:scale-105">Show More Questions</button></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Section -->
+            <section id="contact" class="py-20">
+                <div class="container mx-auto px-6">
+                    <div class="reveal">
+                        <h2 class="text-3xl font-bold text-center mb-4">Let's Start a Conversation</h2>
+                        <p class="text-gray-400 text-center max-w-2xl mx-auto mb-12">Ready to take the next step? Whether you have a question about our services or want to start a project, we're here to help.</p>
+                    </div>
+                    <div class="max-w-lg mx-auto p-8 rounded-lg shadow-lg bg-gray-800/50 border border-gray-700/50 reveal" style="--delay: 0.2s;">
+                        <form action="https://formspree.io/f/your_form_id" method="POST">
+                            <div class="mb-4"><label for="name" class="block text-gray-300 mb-2">Full Name</label><input type="text" id="name" name="name" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required></div>
+                            <div class="mb-4"><label for="mobile" class="block text-gray-300 mb-2">Mobile Number</label><input type="tel" id="mobile" name="mobile" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required></div>
+                            <div class="mb-4"><label for="email" class="block text-gray-300 mb-2">Email <span class="text-sm text-gray-500">(Optional)</span></label><input type="email" id="email" name="email" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"></div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                <div><label for="state" class="block text-gray-300 mb-2">State</label><select id="state" name="state" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required><option value="" disabled selected>Select State</option></select></div>
+                                <div><label for="district" class="block text-gray-300 mb-2">District</label><select id="district" name="district" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required disabled><option value="" disabled selected>Select District</option></select></div>
+                            </div>
+                            <div class="mb-4"><label for="message" class="block text-gray-300 mb-2">Message <span class="text-sm text-gray-500">(Optional)</span></label><textarea id="message" name="message" rows="4" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea></div>
+                            <div class="text-center"><button type="submit" class="shine-button bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-8 rounded-lg transition duration-300 transform hover:scale-105">Send Message</button></div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Services Page Content (Initially Hidden) -->
+        <div id="page-services" class="page-content hidden">
+            <section id="services-list" class="py-20">
+                <div class="container mx-auto px-6">
+                    <div class="text-center mb-16 reveal"><h1 class="text-4xl md:text-5xl font-bold text-white">Our Services</h1><p class="text-lg text-gray-400 mt-4 max-w-2xl mx-auto">Providing essential digital and financial services to empower you.</p></div>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                        <div class="rounded-lg overflow-hidden shadow-lg flex flex-col text-center animated-card reveal" style="--delay: 0.1s;"><div class="p-8 flex flex-col flex-grow"><div class="flex items-center justify-center h-16 w-16 rounded-full bg-gray-900/70 mx-auto mb-6"><img src="https://i.postimg.cc/XJM15mZN/documentation.png" alt="PAN Card Icon" class="w-10 h-10"></div><h3 class="text-2xl font-bold mb-2 text-blue-400">PAN Card Services</h3><p class="text-gray-400 mb-4">Official Partner with <span class="font-semibold">NSDL</span></p><p class="text-gray-400 mb-6 flex-grow">We provide fast and reliable PAN card applications, corrections, and updates through the official NSDL portal.</p><div class="mt-auto"><a href="#contact" data-page="home-contact" class="shine-button w-full text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 transform hover:scale-105 inline-block">Inquire Now</a></div></div></div>
+                        <div class="rounded-lg overflow-hidden shadow-lg flex flex-col text-center animated-card reveal" style="--delay: 0.2s;"><div class="p-8 flex flex-col flex-grow"><div class="flex items-center justify-center h-16 w-16 rounded-full bg-gray-900/70 mx-auto mb-6"><img src="https://i.postimg.cc/zfT6xqYH/fingerprint.png" alt="AEPS Icon" class="w-10 h-10"></div><h3 class="text-2xl font-bold mb-2 text-teal-400">AEPS ID Provider</h3><p class="text-gray-400 mb-4">In association with <span class="font-semibold">Samadhan Web Solution</span></p><p class="text-gray-400 mb-6 flex-grow">Get your Aadhaar Enabled Payment System (AEPS) ID to offer banking services like cash withdrawal, balance inquiry, and more.</p><div class="mt-auto"><a href="#contact" data-page="home-contact" class="shine-button w-full text-center bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 transform hover:scale-105 inline-block">Inquire Now</a></div></div></div>
+                        <div class="rounded-lg overflow-hidden shadow-lg flex flex-col text-center animated-card reveal" style="--delay: 0.3s;"><div class="p-8 flex flex-col flex-grow"><div class="flex items-center justify-center h-16 w-16 rounded-full bg-gray-900/70 mx-auto mb-6"><img src="https://i.postimg.cc/QxPzsFXW/mobile-banking.png" alt="Bank CSP Icon" class="w-10 h-10"></div><h3 class="text-2xl font-bold mb-2 text-green-400">Bank CSP Provider</h3><p class="text-gray-400 mb-4">Become a Customer Service Point</p><p class="text-gray-400 mb-6 flex-grow">We help you set up a Bank CSP to provide essential banking services in your area and earn commissions.</p><div class="mt-auto"><a href="#contact" data-page="home-contact" class="shine-button w-full text-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 transform hover:scale-105 inline-block">Inquire Now</a></div></div></div>
+                        <div class="rounded-lg overflow-hidden shadow-lg flex flex-col text-center animated-card reveal" style="--delay: 0.1s;"><div class="p-8 flex flex-col flex-grow"><div class="flex items-center justify-center h-16 w-16 rounded-full bg-gray-900/70 mx-auto mb-6"><svg class="w-8 h-8 text-purple-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg></div><h3 class="text-2xl font-bold mb-2 text-purple-400">Biopolymer Carry Bags</h3><p class="text-gray-400 mb-4">Eco-Friendly Business Solutions</p><p class="text-gray-400 mb-6 flex-grow">Start your own business with our high-quality, biodegradable biopolymer carry bags. A step towards a greener planet.</p><div class="mt-auto"><a href="#contact" data-page="home-contact" class="shine-button w-full text-center bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 transform hover:scale-105 inline-block">Inquire Now</a></div></div></div>
+                        <div class="rounded-lg overflow-hidden shadow-lg flex flex-col text-center animated-card reveal" style="--delay: 0.2s;"><div class="p-8 flex flex-col flex-grow"><div class="flex items-center justify-center h-16 w-16 rounded-full bg-gray-900/70 mx-auto mb-6"><svg class="w-8 h-8 text-orange-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg></div><h3 class="text-2xl font-bold mb-2 text-orange-400">Mobile Recharge & Bill Payments</h3><p class="text-gray-400 mb-4">One-Stop Payment Solution</p><p class="text-gray-400 mb-6 flex-grow">Offer mobile/DTH recharges, electricity, gas, and 30+ other bill payments. Attract more customers and earn on every transaction.</p><div class="mt-auto"><a href="#contact" data-page="home-contact" class="shine-button w-full text-center bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 transform hover:scale-105 inline-block">Inquire Now</a></div></div></div>
+                        <div class="rounded-lg overflow-hidden shadow-lg flex flex-col text-center animated-card reveal" style="--delay: 0.3s;"><div class="p-8 flex flex-col flex-grow"><div class="flex items-center justify-center h-16 w-16 rounded-full bg-gray-900/70 mx-auto mb-6"><svg class="w-8 h-8 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg></div><h3 class="text-2xl font-bold mb-2 text-yellow-400">Micro-ATM Service</h3><p class="text-gray-400 mb-4">Compact Banking Device</p><p class="text-gray-400 mb-6 flex-grow">A secure, Bluetooth & NFC enabled device for POS transactions and cash withdrawals. Features a long-lasting, high-capacity battery.</p><div class="mt-auto"><a href="#contact" data-page="home-contact" class="shine-button w-full text-center bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 transform hover:scale-105 inline-block">Inquire Now</a></div></div></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Blog Page Content (Initially Hidden) -->
+        <div id="page-blog" class="page-content hidden">
+            <section id="blog-list" class="py-20">
+                <div class="container mx-auto px-6">
+                    <div class="text-center mb-16 reveal"><h1 class="text-4xl md:text-5xl font-bold text-white">From Our Blog</h1><p class="text-lg text-gray-400 mt-4 max-w-2xl mx-auto">Tips, tutorials, and updates on our digital services.</p></div>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+                        <div class="rounded-lg overflow-hidden shadow-lg animated-card reveal" style="--delay: 0.1s;"><div class="bg-indigo-900/30 p-4"><img src="https://i.postimg.cc/D02KYXmR/Untitled-design-1-removebg-preview-1.png" alt="PAN Card Application" class="w-full h-40 object-contain"></div><div class="p-6"><h3 class="text-xl font-bold mb-2">5 Tips for a Smooth PAN Card Application</h3><p class="text-gray-400 mb-4 text-sm">Avoid common mistakes and get your PAN card faster with these essential tips...</p><button data-modal="blog-modal-1" class="read-more-btn text-indigo-400 hover:text-indigo-500 font-semibold">Read More &rarr;</button></div></div>
+                        <div class="rounded-lg overflow-hidden shadow-lg animated-card reveal" style="--delay: 0.2s;"><div class="bg-teal-900/30 p-4"><img src="https://i.postimg.cc/0QbrQh9V/Untitled-design-2-removebg-preview.png" alt="AEPS" class="w-full h-40 object-contain"></div><div class="p-6"><h3 class="text-xl font-bold mb-2">Understanding AEPS: How It Empowers Rural Banking</h3><p class="text-gray-400 mb-4 text-sm">Learn about the Aadhaar Enabled Payment System and its impact on financial inclusion...</p><button data-modal="blog-modal-2" class="read-more-btn text-indigo-400 hover:text-indigo-500 font-semibold">Read More &rarr;</button></div></div>
+                        <div class="rounded-lg overflow-hidden shadow-lg animated-card reveal" style="--delay: 0.3s;"><div class="bg-green-900/30 p-4"><img src="https://i.postimg.cc/05S2BYjK/Untitled-design-3-removebg-preview.png" alt="Bank CSP" class="w-full h-40 object-contain"></div><div class="p-6"><h3 class="text-xl font-bold mb-2">Is a Bank CSP the Right Business for You?</h3><p class="text-gray-400 mb-4 text-sm">Explore the benefits and requirements of starting your own Customer Service Point...</p><button data-modal="blog-modal-3" class="read-more-btn text-indigo-400 hover:text-indigo-500 font-semibold">Read More &rarr;</button></div></div>
+                        <div class="rounded-lg overflow-hidden shadow-lg animated-card reveal" style="--delay: 0.4s;"><div class="bg-yellow-900/30 p-4"><img src="https://i.postimg.cc/DZhV8XQm/Untitled-design-8-removebg-preview.png" alt="Micro-ATM" class="w-full h-40 object-contain"></div><div class="p-6"><h3 class="text-xl font-bold mb-2">The Power of Micro-ATMs in Modern Retail</h3><p class="text-gray-400 mb-4 text-sm">Discover how a compact Micro-ATM device can increase footfall and revenue for your business...</p><button data-modal="blog-modal-4" class="read-more-btn text-indigo-400 hover:text-indigo-500 font-semibold">Read More &rarr;</button></div></div>
+                        <div class="rounded-lg overflow-hidden shadow-lg animated-card reveal" style="--delay: 0.1s;"><div class="bg-orange-900/30 p-4"><img src="https://i.postimg.cc/rmrc7TV2/Untitled-design-4-removebg-preview.png" alt="Mobile Recharge" class="w-full h-40 object-contain"></div><div class="p-6"><h3 class="text-xl font-bold mb-2">Maximizing Profits with Bill Pay Services</h3><p class="text-gray-400 mb-4 text-sm">A guide to offering diverse bill payment services and boosting your income...</p><button data-modal="blog-modal-5" class="read-more-btn text-indigo-400 hover:text-indigo-500 font-semibold">Read More &rarr;</button></div></div>
+                        <div class="rounded-lg overflow-hidden shadow-lg animated-card reveal" style="--delay: 0.2s;"><div class="bg-purple-900/30 p-4"><img src="https://i.postimg.cc/jSSTtPxX/Untitled-design-5-removebg-preview.png" alt="Eco-friendly bags" class="w-full h-40 object-contain"></div><div class="p-6"><h3 class="text-xl font-bold mb-2">The Rise of Eco-Friendly Business Solutions</h3><p class="text-gray-400 mb-4 text-sm">Why biopolymer bags are a smart and sustainable choice for today's businesses...</p><button data-modal="blog-modal-6" class="read-more-btn text-indigo-400 hover:text-indigo-500 font-semibold">Read More &rarr;</button></div></div>
+                        <div class="rounded-lg overflow-hidden shadow-lg animated-card reveal" style="--delay: 0.3s;"><div class="bg-blue-900/30 p-4"><img src="https://i.postimg.cc/m28xXkYF/Untitled-design-6-removebg-preview.png" alt="Digital KYC" class="w-full h-40 object-contain"></div><div class="p-6"><h3 class="text-xl font-bold mb-2">Navigating Digital KYC: A Simple Guide</h3><p class="text-gray-400 mb-4 text-sm">Understand the importance of KYC and how we simplify the process for you...</p><button data-modal="blog-modal-7" class="read-more-btn text-indigo-400 hover:text-indigo-500 font-semibold">Read More &rarr;</button></div></div>
+                        <div class="rounded-lg overflow-hidden shadow-lg animated-card reveal" style="--delay: 0.4s;"><div class="bg-red-900/30 p-4"><img src="https://i.postimg.cc/8z02GYnp/Untitled-design-7.png" alt="Digital Security" class="w-full h-40 object-contain"></div><div class="p-6"><h3 class="text-xl font-bold mb-2">Your Security is Our Priority</h3><p class="text-gray-400 mb-4 text-sm">Learn about the security measures we take to protect your data and transactions...</p><button data-modal="blog-modal-8" class="read-more-btn text-indigo-400 hover:text-indigo-500 font-semibold">Read More &rarr;</button></div></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-gray-800/50">
+        <div class="container mx-auto px-6 text-center text-gray-500">
+            <p>&copy; 2025 Krittika Digital Assist. All Rights Reserved. | Founded by Krishnendu Dhara</p>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-indigo-600 hover:bg-indigo-700 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center hidden transform hover:scale-110 transition-all duration-300 z-50">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+    </button>
+
+    <!-- All Modals (Auth & Blog) -->
+    <div id="auth-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md relative transform transition-transform scale-95 border border-gray-700">
+            <button id="close-modal-button" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="flex border-b border-gray-700 mb-6">
+                <button id="signin-tab" class="flex-1 py-3 text-lg font-semibold text-white border-b-2 border-indigo-500">Sign In</button>
+                <button id="signup-tab" class="flex-1 py-3 text-lg font-semibold text-gray-500">Sign Up</button>
+            </div>
+            <form id="signin-form" action="#" method="POST">
+                <div class="mb-4"><label for="signin-email" class="block text-gray-300 mb-2">Email Address</label><input type="email" id="signin-email" name="email" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required></div>
+                <div class="mb-6"><label for="signin-password" class="block text-gray-300 mb-2">Password</label><input type="password" id="signin-password" name="password" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required></div>
+                <div class="text-center"><button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 transform hover:scale-105 shine-button">Sign In</button></div>
+            </form>
+            <form id="signup-form" action="#" method="POST" class="hidden">
+                <div class="mb-4"><label for="signup-name" class="block text-gray-300 mb-2">Full Name</label><input type="text" id="signup-name" name="name" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required></div>
+                <div class="mb-4"><label for="signup-email" class="block text-gray-300 mb-2">Email Address</label><input type="email" id="signup-email" name="email" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required></div>
+                <div class="mb-4"><label for="signup-password" class="block text-gray-300 mb-2">Password</label><input type="password" id="signup-password" name="password" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required></div>
+                <div class="mb-6"><label for="signup-confirm-password" class="block text-gray-300 mb-2">Confirm Password</label><input type="password" id="signup-confirm-password" name="confirm-password" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required></div>
+                <div class="text-center"><button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 transform hover:scale-105 shine-button">Create Account</button></div>
+            </form>
+        </div>
+    </div>
+    <div id="blog-modal-1" class="blog-modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden p-4"><div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-3xl relative border border-gray-700"><button class="close-blog-modal-btn absolute top-4 right-4 text-gray-400 hover:text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button><div class="blog-modal-content text-gray-300"><h2 class="text-3xl font-bold mb-4 text-white">5 Tips for a Smooth PAN Card Application</h2><p class="mb-4">Applying for a PAN card is a crucial step for financial transactions in India. To ensure your application goes through without a hitch, follow these five essential tips:</p><ul class="list-disc list-inside space-y-2 mb-4"><li><strong>Double-Check Your Details:</strong> Ensure your name, father's name, and date of birth match exactly with your official documents like Aadhaar. Mismatches are the most common cause of rejection.</li><li><strong>Use a Clear Photograph:</strong> Your photograph should be recent, in color, with a white background. Avoid selfies or blurry images.</li><li><strong>Correct Signature:</strong> Sign within the box provided on the application form. Your signature should be clear and not touch the borders of the box.</li><li><strong>Provide Accurate Address:</strong> The address you provide is where your physical PAN card will be delivered. Ensure it is complete with a landmark and correct PIN code.</li><li><strong>Keep Documents Ready:</strong> Have clear copies of your Proof of Identity (POI), Proof of Address (POA), and Proof of Date of Birth (DOB) ready for submission.</li></ul><p>By following these simple steps, you can avoid delays and get your PAN card quickly and efficiently. At Krittika Digital Assist, we guide you through every step of this process.</p></div></div></div>
+    <!-- Other 7 blog modals here... -->
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Element Selectors ---
+            const pageContents = document.querySelectorAll('.page-content');
+            const navLinks = document.querySelectorAll('a[data-page]');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const stateSelect = document.getElementById('state');
+            const districtSelect = document.getElementById('district');
+            const faqItems = document.querySelectorAll('.faq-item');
+            const backToTopButton = document.getElementById('back-to-top');
+            const authModal = document.getElementById('auth-modal');
+            const signinNavLinks = [document.getElementById('signin-nav-link'), document.getElementById('signin-mobile-link')];
+            const closeModalButton = document.getElementById('close-modal-button');
+            const signinTab = document.getElementById('signin-tab');
+            const signupTab = document.getElementById('signup-tab');
+            const signinForm = document.getElementById('signin-form');
+            const signupForm = document.getElementById('signup-form');
+            const showMoreFaqsBtn = document.getElementById('show-more-faqs-btn');
+            const moreFaqsContainer = document.getElementById('more-faqs');
+            const readMoreBtns = document.querySelectorAll('.read-more-btn');
+            const blogModals = document.querySelectorAll('.blog-modal');
+            const closeBlogModalBtns = document.querySelectorAll('.close-blog-modal-btn');
+            const customCursor = document.querySelector('.custom-cursor');
+
+            // --- Professional Enhancements ---
+
+            // 1. Custom Cursor Logic
+            if (window.matchMedia("(pointer: fine)").matches) {
+                window.addEventListener('mousemove', e => {
+                    customCursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+                });
+                document.querySelectorAll('a, button, .faq-question, .animated-card').forEach(el => {
+                    el.addEventListener('mouseenter', () => customCursor.classList.add('grow'));
+                    el.addEventListener('mouseleave', () => customCursor.classList.remove('grow'));
+                });
+            } else {
+                if(customCursor) customCursor.classList.add('hidden');
+            }
+
+            // 2. Scroll-Reveal Animations
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+            // 3. Particles.js Initialization
+            if (document.getElementById('particles-js')) {
+                particlesJS('particles-js', {
+                    "particles": {
+                        "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
+                        "color": { "value": "#818cf8" },
+                        "shape": { "type": "circle", "stroke": { "width": 0, "color": "#000000" } },
+                        "opacity": { "value": 0.5, "random": true, "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false } },
+                        "size": { "value": 3, "random": true, "anim": { "enable": false } },
+                        "line_linked": { "enable": true, "distance": 150, "color": "#818cf8", "opacity": 0.4, "width": 1 },
+                        "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
+                    },
+                    "interactivity": {
+                        "detect_on": "canvas",
+                        "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+                        "modes": { "repulse": { "distance": 100, "duration": 0.4 }, "push": { "particles_nb": 4 } }
+                    },
+                    "retina_detect": true
+                });
+            }
+
+            // --- Core Logic ---
+            
+            // Page Navigation with Fade Transition
+            let currentPageId = 'home';
+            const showPage = (pageId, anchor = null) => {
+                const currentPage = document.getElementById(`page-${currentPageId}`);
+                if (currentPage) currentPage.classList.add('fade-out');
+                
+                setTimeout(() => {
+                    if(currentPage) {
+                       currentPage.classList.add('hidden');
+                       currentPage.classList.remove('fade-out');
+                    }
+                    
+                    const targetPage = document.getElementById(`page-${pageId}`);
+                    if (targetPage) {
+                        targetPage.classList.remove('hidden');
+                        targetPage.style.transform = 'translateY(0)';
+                        document.querySelectorAll(`#page-${pageId} .reveal`).forEach(el => {
+                            el.classList.remove('visible');
+                            revealObserver.observe(el);
+                        });
+                        if (anchor) {
+                            setTimeout(() => document.getElementById(anchor)?.scrollIntoView({ behavior: 'smooth' }), 50);
+                        } else {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
+                    }
+                    currentPageId = pageId;
+                }, 400);
+            };
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    let pageId = link.dataset.page;
+                    let anchor = null;
+                    if (pageId.startsWith('home-')) {
+                        [pageId, anchor] = pageId.split('-');
+                    }
+                    showPage(pageId, anchor);
+                    if (mobileMenu) mobileMenu.classList.add('hidden');
+                });
+            });
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+            }
+
+            // State/District Dropdown with complete data
+            const stateDistrictData = { "Andaman and Nicobar Islands": ["Nicobar", "North and Middle Andaman", "South Andaman"], "Andhra Pradesh": ["Anantapur", "Chittoor", "East Godavari", "Guntur", "Krishna", "Kurnool", "Prakasam", "Srikakulam", "Sri Potti Sriramulu Nellore", "Visakhapatnam", "Vizianagaram", "West Godavari", "Y.S.R. Kadapa"], "Arunachal Pradesh": ["Anjaw", "Changlang", "Dibang Valley", "East Kameng", "East Siang", "Kamle", "Kra Daadi", "Kurung Kumey", "Lepa Rada", "Lohit", "Longding", "Lower Dibang Valley", "Lower Siang", "Lower Subansiri", "Namsai", "Pakke Kessang", "Papum Pare", "Shi Yomi", "Siang", "Tawang", "Tirap", "Upper Siang", "Upper Subansiri", "West Kameng", "West Siang"], "Assam": ["Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo", "Chirang", "Darrang", "Dhemaji", "Dhubri", "Dibrugarh", "Dima Hasao", "Goalpara", "Golaghat", "Hailakandi", "Hojai", "Jorhat", "Kamrup", "Kamrup Metropolitan", "Karbi Anglong", "Karimganj", "Kokrajhar", "Lakhimpur", "Majuli", "Morigaon", "Nagaon", "Nalbari", "Sivasagar", "Sonitpur", "South Salmara-Mankachar", "Tinsukia", "Udalguri", "West Karbi Anglong"], "Bihar": ["Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur", "Bhojpur", "Buxar", "Darbhanga", "East Champaran", "Gaya", "Gopalganj", "Jamui", "Jehanabad", "Kaimur", "Katihar", "Khagaria", "Kishanganj", "Lakhisarai", "Madhepura", "Madhubani", "Munger", "Muzaffarpur", "Nalanda", "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur", "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul", "Vaishali", "West Champaran"], "Chandigarh": ["Chandigarh"], "Chhattisgarh": ["Balod", "Baloda Bazar", "Balrampur", "Bastar", "Bemetara", "Bijapur", "Bilaspur", "Dantewada", "Dhamtari", "Durg", "Gariaband", "Gaurela Pendra Marwahi", "Janjgir-Champa", "Jashpur", "Kanker", "Kawardha", "Kondagaon", "Korba", "Koriya", "Mahasamund", "Mungeli", "Narayanpur", "Raigarh", "Raipur", "Rajnandgaon", "Sukma", "Surajpur", "Surguja"], "Dadra and Nagar Haveli and Daman and Diu": ["Daman", "Diu", "Dadra and Nagar Haveli"], "Delhi": ["Central Delhi", "East Delhi", "New Delhi", "North Delhi", "North East Delhi", "North West Delhi", "Shahdara", "South Delhi", "South East Delhi", "South West Delhi", "West Delhi"], "Goa": ["North Goa", "South Goa"], "Gujarat": ["Ahmedabad", "Amreli", "Anand", "Aravalli", "Banaskantha", "Bharuch", "Bhavnagar", "Botad", "Chhota Udaipur", "Dahod", "Dang", "Devbhoomi Dwarka", "Gandhinagar", "Gir Somnath", "Jamnagar", "Junagadh", "Kheda", "Kutch", "Mahisagar", "Mehsana", "Morbi", "Narmada", "Navsari", "Panchmahal", "Patan", "Porbandar", "Rajkot", "Sabarkantha", "Surat", "Surendranagar", "Tapi", "Vadodara", "Valsad"], "Haryana": ["Ambala", "Bhiwani", "Charkhi Dadri", "Faridabad", "Fatehabad", "Gurugram", "Hisar", "Jhajjar", "Jind", "Kaithal", "Karnal", "Kurukshetra", "Mahendragarh", "Nuh", "Palwal", "Panchkula", "Panipat", "Rewari", "Rohtak", "Sirsa", "Sonipat", "Yamunanagar"], "Himachal Pradesh": ["Bilaspur", "Chamba", "Hamirpur", "Kangra", "Kinnaur", "Kullu", "Lahaul and Spiti", "Mandi", "Shimla", "Sirmaur", "Solan", "Una"], "Jammu and Kashmir": ["Anantnag", "Bandipora", "Baramulla", "Budgam", "Doda", "Ganderbal", "Jammu", "Kathua", "Kishtwar", "Kulgam", "Kupwara", "Poonch", "Pulwama", "Rajouri", "Ramban", "Reasi", "Samba", "Shopian", "Srinagar", "Udhampur"], "Jharkhand": ["Bokaro", "Chatra", "Deoghar", "Dhanbad", "Dumka", "East Singhbhum", "Garhwa", "Giridih", "Godda", "Gumla", "Hazaribagh", "Jamtara", "Khunti", "Koderma", "Latehar", "Lohardaga", "Pakur", "Palamu", "Ramgarh", "Ranchi", "Sahebganj", "Seraikela Kharsawan", "Simdega", "West Singhbhum"], "Karnataka": ["Bagalkot", "Ballari", "Belagavi", "Bengaluru Rural", "Bengaluru Urban", "Bidar", "Chamarajanagar", "Chikballapur", "Chikkamagaluru", "Chitradurga", "Dakshina Kannada", "Davanagere", "Dharwad", "Gadag", "Hassan", "Haveri", "Kalaburagi", "Kodagu", "Kolar", "Koppal", "Mandya", "Mysuru", "Raichur", "Ramanagara", "Shivamogga", "Tumakuru", "Udupi", "Uttara Kannada", "Vijayapura", "Yadgir"], "Kerala": ["Alappuzha", "Ernakulam", "Idukki", "Kannur", "Kasaragod", "Kollam", "Kottayam", "Kozhikode", "Malappuram", "Palakkad", "Pathanamthitta", "Thiruvananthapuram", "Thrissur", "Wayanad"], "Ladakh": ["Kargil", "Leh"], "Lakshadweep": ["Lakshadweep"], "Madhya Pradesh": ["Agar Malwa", "Alirajpur", "Anuppur", "Ashoknagar", "Balaghat", "Barwani", "Betul", "Bhind", "Bhopal", "Burhanpur", "Chhatarpur", "Chhindwara", "Damoh", "Datia", "Dewas", "Dhar", "Dindori", "Guna", "Gwalior", "Harda", "Hoshangabad", "Indore", "Jabalpur", "Jhabua", "Katni", "Khandwa", "Khargone", "Mandla", "Mandsaur", "Morena", "Narsinghpur", "Neemuch", "Panna", "Raisen", "Rajgarh", "Ratlam", "Rewa", "Sagar", "Satna", "Sehore", "Seoni", "Shahdol", "Shajapur", "Sheopur", "Shivpuri", "Sidhi", "Singrauli", "Tikamgarh", "Ujjain", "Umaria", "Vidisha"], "Maharashtra": ["Ahmednagar", "Akola", "Amravati", "Aurangabad", "Beed", "Bhandara", "Buldhana", "Chandrapur", "Dhule", "Gadchiroli", "Gondia", "Hingoli", "Jalgaon", "Jalna", "Kolhapur", "Latur", "Mumbai City", "Mumbai Suburban", "Nagpur", "Nanded", "Nandurbar", "Nashik", "Osmanabad", "Palghar", "Parbhani", "Pune", "Raigad", "Ratnagiri", "Sangli", "Satara", "Sindhudurg", "Solapur", "Thane", "Wardha", "Washim", "Yavatmal"], "Manipur": ["Bishnupur", "Chandel", "Churachandpur", "Imphal East", "Imphal West", "Jiribam", "Kakching", "Kamjong", "Kangpokpi", "Noney", "Pherzawl", "Senapati", "Tamenglong", "Tengnoupal", "Thoubal", "Ukhrul"], "Meghalaya": ["East Garo Hills", "East Jaintia Hills", "East Khasi Hills", "North Garo Hills", "Ri Bhoi", "South Garo Hills", "South West Garo Hills", "South West Khasi Hills", "West Garo Hills", "West Jaintia Hills", "West Khasi Hills"], "Mizoram": ["Aizawl", "Champhai", "Hnahthial", "Kolasib", "Lawngtlai", "Lunglei", "Mamit", "Saiha", "Saitual", "Serchhip"], "Nagaland": ["Dimapur", "Kiphire", "Kohima", "Longleng", "Mokokchung", "Mon", "Peren", "Phek", "Tuensang", "Wokha", "Zunheboto"], "Odisha": ["Angul", "Balangir", "Balasore", "Bargarh", "Bhadrak", "Boudh", "Cuttack", "Deogarh", "Dhenkanal", "Gajapati", "Ganjam", "Jagatsinghpur", "Jajpur", "Jharsuguda", "Kalahandi", "Kandhamal", "Kendrapara", "Kendujhar", "Khordha", "Koraput", "Malkangiri", "Mayurbhanj", "Nabarangpur", "Nayagarh", "Nuapada", "Puri", "Rayagada", "Sambalpur", "Sonepur", "Sundargarh"], "Puducherry": ["Karaikal", "Mahe", "Puducherry", "Yanam"], "Punjab": ["Amritsar", "Barnala", "Bathinda", "Faridkot", "Fatehgarh Sahib", "Fazilka", "Ferozepur", "Gurdaspur", "Hoshiarpur", "Jalandhar", "Kapurthala", "Ludhiana", "Mansa", "Moga", "Pathankot", "Patiala", "Rupnagar", "S.A.S. Nagar", "Sangrur", "Shahid Bhagat Singh Nagar", "Sri Muktsar Sahib", "Tarn Taran"], "Rajasthan": ["Ajmer", "Alwar", "Banswara", "Baran", "Barmer", "Bharatpur", "Bhilwara", "Bikaner", "Bundi", "Chittorgarh", "Churu", "Dausa", "Dholpur", "Dungarpur", "Hanumangarh", "Jaipur", "Jaisalmer", "Jalore", "Jhalawar", "Jhunjhunu", "Jodhpur", "Karauli", "Kota", "Nagaur", "Pali", "Pratapgarh", "Rajsamand", "Sawai Madhopur", "Sikar", "Sirohi", "Sri Ganganagar", "Tonk", "Udaipur"], "Sikkim": ["East Sikkim", "North Sikkim", "South Sikkim", "West Sikkim"], "Tamil Nadu": ["Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", "Dindigul", "Erode", "Kallakurichi", "Kanchipuram", "Kanyakumari", "Karur", "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris", "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga", "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli", "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore", "Viluppuram", "Virudhunagar"], "Telangana": ["Adilabad", "Bhadradri Kothagudem", "Hyderabad", "Jagtial", "Jangaon", "Jayashankar Bhupalpally", "Jogulamba Gadwal", "Kamareddy", "Karimnagar", "Khammam", "Komaram Bheem", "Mahabubabad", "Mahbubnagar", "Mancherial", "Medak", "Medchal-Malkajgiri", "Mulugu", "Nagarkurnool", "Nalgonda", "Narayanpet", "Nirmal", "Nizamabad", "Peddapalli", "Rajanna Sircilla", "Ranga Reddy", "Sangareddy", "Siddipet", "Suryapet", "Vikarabad", "Wanaparthy", "Warangal Rural", "Warangal Urban", "Yadadri Bhuvanagiri"], "Tripura": ["Dhalai", "Gomati", "Khowai", "North Tripura", "Sepahijala", "South Tripura", "Unakoti", "West Tripura"], "Uttar Pradesh": ["Agra", "Aligarh", "Ambedkar Nagar", "Amethi", "Amroha", "Auraiya", "Ayodhya", "Azamgarh", "Baghpat", "Bahraich", "Ballia", "Balrampur", "Banda", "Barabanki", "Bareilly", "Basti", "Bhadohi", "Bijnor", "Budaun", "Bulandshahr", "Chandauli", "Chitrakoot", "Deoria", "Etah", "Etawah", "Farrukhabad", "Fatehpur", "Firozabad", "Gautam Buddha Nagar", "Ghaziabad", "Ghazipur", "Gonda", "Gorakhpur", "Hamirpur", "Hapur", "Hardoi", "Hathras", "Jalaun", "Jaunpur", "Jhansi", "Kannauj", "Kanpur Dehat", "Kanpur Nagar", "Kasganj", "Kaushambi", "Kheri", "Kushinagar", "Lalitpur", "Lucknow", "Maharajganj", "Mahoba", "Mainpuri", "Mathura", "Mau", "Meerut", "Mirzapur", "Moradabad", "Muzaffarnagar", "Pilibhit", "Pratapgarh", "Prayagraj", "Raebareli", "Rampur", "Saharanpur", "Sambhal", "Sant Kabir Nagar", "Shahjahanpur", "Shamli", "Shravasti", "Siddharthnagar", "Sitapur", "Sonbhadra", "Sultanpur", "Unnao", "Varanasi"], "Uttarakhand": ["Almora", "Bageshwar", "Chamoli", "Champawat", "Dehradun", "Haridwar", "Nainital", "Pauri Garhwal", "Pithoragarh", "Rudraprayag", "Tehri Garhwal", "Udham Singh Nagar", "Uttarkashi"], "West Bengal": ["Alipurduar", "Bankura", "Birbhum", "Cooch Behar", "Dakshin Dinajpur", "Darjeeling", "Hooghly", "Howrah", "Jalpaiguri", "Jhargram", "Kalimpong", "Kolkata", "Malda", "Murshidabad", "Nadia", "North 24 Parganas", "Paschim Bardhaman", "Paschim Medinipur", "Purba Bardhaman", "Purba Medinipur", "Purulia", "South 24 Parganas", "Uttar Dinajpur"] };
+            if(stateSelect) {
+                for (const state in stateDistrictData) {
+                    stateSelect.add(new Option(state, state));
+                }
+                stateSelect.addEventListener('change', (e) => {
+                    const selectedState = e.target.value;
+                    districtSelect.innerHTML = '<option value="" disabled selected>Select District</option>';
+                    districtSelect.disabled = !selectedState;
+                    if (selectedState && stateDistrictData[selectedState]) {
+                        stateDistrictData[selectedState].forEach(district => districtSelect.add(new Option(district, district)));
+                    }
+                });
+            }
+
+            // FAQ Accordion
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                if(question) {
+                    question.addEventListener('click', () => {
+                        const currentlyActive = document.querySelector('.faq-item.active');
+                        if (currentlyActive && currentlyActive !== item) currentlyActive.classList.remove('active');
+                        item.classList.toggle('active');
+                    });
+                }
+            });
+            
+            if(showMoreFaqsBtn && moreFaqsContainer) {
+                showMoreFaqsBtn.addEventListener('click', () => {
+                    moreFaqsContainer.classList.remove('hidden');
+                    showMoreFaqsBtn.classList.add('hidden');
+                });
+            }
+
+            // Back to Top Button
+            if(backToTopButton) {
+                window.addEventListener('scroll', () => backToTopButton.classList.toggle('hidden', window.scrollY <= 300));
+                backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+            }
+
+            // Auth Modal Logic
+            const authModalContainer = document.querySelector('#auth-modal > div');
+            const openModal = () => {
+                if(authModal && authModalContainer) {
+                    authModal.classList.remove('hidden');
+                    setTimeout(() => authModalContainer.classList.remove('scale-95'), 10);
+                }
+            }
+            const closeModal = () => {
+                if(authModal && authModalContainer) {
+                    authModalContainer.classList.add('scale-95');
+                    setTimeout(() => authModal.classList.add('hidden'), 200);
+                }
+            }
+            signinNavLinks.forEach(link => {
+                if(link) link.addEventListener('click', (e) => { e.preventDefault(); openModal(); });
+            });
+
+            if(closeModalButton) closeModalButton.addEventListener('click', closeModal);
+            if(authModal) authModal.addEventListener('click', (e) => { if (e.target === authModal) closeModal(); });
+            
+            if(signinTab && signupTab && signinForm && signupForm) {
+                signinTab.addEventListener('click', () => {
+                    signinTab.classList.add('border-indigo-500', 'text-white'); signupTab.classList.remove('border-indigo-500', 'text-white');
+                    signinForm.classList.remove('hidden'); signupForm.classList.add('hidden');
+                });
+                signupTab.addEventListener('click', () => {
+                    signupTab.classList.add('border-indigo-500', 'text-white'); signinTab.classList.remove('border-indigo-500', 'text-white');
+                    signupForm.classList.remove('hidden'); signinForm.classList.add('hidden');
+                });
+            }
+            
+            // Blog Modals Logic
+            const openBlogModal = (modalId) => document.getElementById(modalId)?.classList.remove('hidden');
+            const closeBlogModal = (modal) => modal.classList.add('hidden');
+            readMoreBtns.forEach(btn => btn.addEventListener('click', () => openBlogModal(btn.dataset.modal)));
+            closeBlogModalBtns.forEach(btn => btn.addEventListener('click', () => closeBlogModal(btn.closest('.blog-modal'))));
+            blogModals.forEach(modal => modal.addEventListener('click', e => { if (e.target === modal) closeBlogModal(modal); }));
+        });
+    </script>
+</body>
+</html>
