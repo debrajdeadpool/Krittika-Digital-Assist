@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Krittika Digital Assist - Portfolio & Services</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Add this script for the aspect-ratio plugin -->
     <script src="https://cdn.tailwindcss.com?plugins=aspect-ratio"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,10 +13,51 @@
         body {
             font-family: 'Inter', sans-serif;
         }
-        /* Style for disabled dropdown */
         select:disabled {
-            background-color: #4A5568; /* gray-700 */
+            background-color: #4A5568;
             cursor: not-allowed;
+        }
+        .faq-item .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+            padding: 0 1.5rem; /* 0 p-6 */
+        }
+        .faq-item.active .faq-answer {
+            max-height: 200px; /* Adjust as needed */
+            padding: 1.5rem; /* p-6 */
+        }
+        .faq-item.active .plus-icon {
+            transform: rotate(45deg);
+        }
+        .faq-item .plus-icon {
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        /* Testimonial Carousel Styles */
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-288px * 6)); } /* (width of card + gap) * number of cards */
+        }
+        .testimonial-carousel-track {
+            animation: scroll 40s linear infinite;
+            display: flex;
+            width: calc(288px * 12); /* (width of card + gap) * number of cards * 2 (for seamless loop) */
+        }
+        .testimonial-carousel:hover .testimonial-carousel-track {
+            animation-play-state: paused;
+        }
+        
+        /* Blog Modal Styles */
+        .blog-modal-content {
+            max-height: 80vh;
+            overflow-y: auto;
+            /* Hide scrollbar for Webkit browsers */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .blog-modal-content::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, and Opera */
         }
     </style>
 </head>
@@ -26,140 +66,499 @@
     <!-- Header -->
     <header class="bg-gray-900/80 backdrop-blur-lg fixed top-0 left-0 right-0 z-50">
         <div class="container mx-auto px-6 py-3 flex justify-between items-center">
-            <a href="index.html" class="flex items-center space-x-3">
-                <!-- Logo Container -->
+            <a href="#" data-page="home" class="flex items-center space-x-3">
                 <div class="relative w-12 h-12 flex-shrink-0 rounded-full overflow-hidden border-2 border-indigo-500 bg-gray-800">
                     <img src="https://i.postimg.cc/TYgp9y6h/edfdfsfsf-removebg-preview.png" alt="Krittika Digital Assist Logo" class="w-full h-full object-cover">
                 </div>
                 <span class="text-xl font-bold text-indigo-400 hidden sm:inline">Krittika Digital Assist</span>
             </a>
             <nav class="hidden md:flex space-x-6 items-center">
-                <a href="index.html#about" class="text-gray-300 hover:text-indigo-400 transition duration-300">About</a>
-                <a href="services.html" class="text-gray-300 hover:text-indigo-400 transition duration-300">Services</a>
-                <a href="index.html#contact" class="text-gray-300 hover:text-indigo-400 transition duration-300">Contact</a>
-                <a href="login.html" class="border border-indigo-500 text-indigo-400 hover:bg-indigo-500 hover:text-white font-medium py-2 px-4 rounded-lg transition duration-300">
+                <a href="#about" data-page="home-about" class="nav-link text-gray-300 hover:text-indigo-400 transition duration-300">About</a>
+                <a href="#" data-page="services" class="nav-link text-gray-300 hover:text-indigo-400 transition duration-300">Services</a>
+                 <a href="#" data-page="blog" class="nav-link text-gray-300 hover:text-indigo-400 transition duration-300">Blog</a>
+                <a href="#contact" data-page="home-contact" class="nav-link text-gray-300 hover:text-indigo-400 transition duration-300">Contact</a>
+                <a href="#" id="signin-nav-link" class="border border-indigo-500 text-indigo-400 hover:bg-indigo-500 hover:text-white font-medium py-2 px-4 rounded-lg transition duration-300">
                     Sign In
                 </a>
             </nav>
-            <button id="mobile-menu-button-index" class="md:hidden text-gray-300 hover:text-white focus:outline-none">
+            <button id="mobile-menu-button" class="md:hidden text-gray-300 hover:text-white focus:outline-none">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
             </button>
         </div>
-        <!-- Mobile Menu -->
-        <div id="mobile-menu-index" class="hidden md:hidden px-6 pb-4">
-            <a href="index.html#about" class="block py-2 text-gray-300 hover:text-indigo-400">About</a>
-            <a href="services.html" class="block py-2 text-gray-300 hover:text-indigo-400">Services</a>
-            <a href="index.html#contact" class="block py-2 text-gray-300 hover:text-indigo-400">Contact</a>
-            <a href="login.html" class="block mt-2 border border-indigo-500 text-indigo-400 hover:bg-indigo-500 hover:text-white font-medium py-2 px-4 rounded-lg text-center transition duration-300">Sign In</a>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+            <a href="#about" data-page="home-about" class="block py-2 text-gray-300 hover:text-indigo-400">About</a>
+            <a href="#" data-page="services" class="block py-2 text-gray-300 hover:text-indigo-400">Services</a>
+            <a href="#" data-page="blog" class="block py-2 text-gray-300 hover:text-indigo-400">Blog</a>
+            <a href="#contact" data-page="home-contact" class="block py-2 text-gray-300 hover:text-indigo-400">Contact</a>
+            <a href="#" id="signin-mobile-link" class="block mt-2 border border-indigo-500 text-indigo-400 hover:bg-indigo-500 hover:text-white font-medium py-2 px-4 rounded-lg text-center transition duration-300">Sign In</a>
         </div>
     </header>
 
     <main class="flex-grow pt-24">
-        <!-- Hero Section -->
-        <section id="hero" class="container mx-auto px-6 py-20 md:py-32">
-            <div class="flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 text-center md:text-left mb-10 md:mb-0">
-                    <span class="text-indigo-400 font-semibold">Welcome to</span>
-                    <h1 class="text-4xl md:text-6xl font-bold mt-2 mb-4">Krittika Digital Assist</h1>
-                    <h2 class="text-2xl md:text-3xl text-gray-300 mb-6">Your Partner in Digital Services</h2>
-                    <p class="text-gray-400 max-w-lg mx-auto md:mx-0 mb-8">
-                        We offer essential digital and financial services to empower your business and personal needs.
-                    </p>
-                    <div class="flex justify-center md:justify-start space-x-4">
-                        <a href="#contact" class="bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-3 px-6 rounded-lg transition duration-300">Contact Us</a>
-                        <a href="services.html" class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-3 px-6 rounded-lg transition duration-300">Our Services</a>
-                    </div>
-                </div>
-                <div class="md:w-1/2 flex justify-center mt-10 md:mt-0">
-                    <!-- Hero Image Container -->
-                    <div class="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden bg-gray-800 border-4 border-indigo-500 shadow-lg">
-                        <img src="https://i.postimg.cc/TYgp9y6h/edfdfsfsf-removebg-preview.png" alt="Krittika Digital Assist" class="w-full h-full object-cover">
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- About Me Section -->
-        <section id="about" class="bg-gray-800 py-20">
-            <div class="container mx-auto px-6">
-                <h2 class="text-3xl font-bold text-center mb-12">About Us</h2>
-                <p class="text-gray-400 max-w-3xl mx-auto text-center">
-                    Krittika Digital Assist is passionate about crafting elegant solutions. Our journey in the digital world is driven by a love for design, technology, and storytelling. We specialize in web development, creating digital assets, and providing key financial and digital services to help others.
-                </p>
-            </div>
-        </section>
-
-        <!-- YouTube Channel Section -->
-        <section id="youtube" class="py-20">
-            <div class="container mx-auto px-6">
-                <div class="bg-gray-800 rounded-2xl shadow-2xl p-8 md:p-12">
-                    <div class="text-center max-w-3xl mx-auto">
-                        <h2 class="text-3xl font-bold mb-4">Check Out Our YouTube Channel!</h2>
-                        <p class="text-gray-400 mb-8">
-                           We provide tutorials and updates on essential digital services like PAN card applications, AEPS transactions, and setting up Bank CSPs. Subscribe to stay informed and learn how to use these services effectively!
+        <!-- Main Home Page Content -->
+        <div id="page-home" class="page-content">
+            <!-- Hero Section -->
+            <section id="hero" class="container mx-auto px-6 py-20 md:py-32">
+                 <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 text-center md:text-left mb-10 md:mb-0">
+                        <span class="text-indigo-400 font-semibold">Welcome to</span>
+                        <h1 class="text-4xl md:text-6xl font-bold mt-2 mb-4">Krittika Digital Assist</h1>
+                        <h2 class="text-2xl md:text-3xl text-gray-300 mb-6">Your Partner in Digital Services</h2>
+                        <p class="text-gray-400 max-w-lg mx-auto md:mx-0 mb-8">
+                            We offer essential digital and financial services to empower your business and personal needs.
                         </p>
-                    </div>
-                    <div class="max-w-4xl mx-auto">
-                        <!-- Responsive Aspect Ratio Container for YouTube Embed -->
-                        <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-lg">
-                            <iframe class="w-full h-full" src="https://www.youtube.com/embed/EI2zotmAanQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                        <div class="flex justify-center md:justify-start space-x-4">
+                            <a href="#contact" data-page="home-contact" class="bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-3 px-6 rounded-lg transition duration-300">Contact Us</a>
+                            <a href="#" data-page="services" class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-3 px-6 rounded-lg transition duration-300">Our Services</a>
                         </div>
                     </div>
-                    <div class="text-center mt-8">
-                         <a href="https://youtube.com/@withkrishnendu?si=D4W02pZqTf-1mWSH" target="_blank" rel="noopener noreferrer" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 text-lg">
-                            Subscribe Now
-                        </a>
+                    <div class="md:w-1/2 flex justify-center mt-10 md:mt-0">
+                        <div class="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden bg-gray-800 border-4 border-indigo-500 shadow-lg">
+                            <img src="https://i.postimg.cc/TYgp9y6h/edfdfsfsf-removebg-preview.png" alt="Krittika Digital Assist" class="w-full h-full object-cover">
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+            
+            <!-- About Me Section -->
+            <section id="about" class="bg-gray-800 py-20">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-3xl font-bold text-center mb-12">About Us</h2>
+                    <p class="text-gray-400 max-w-3xl mx-auto text-center">
+                        Krittika Digital Assist is passionate about crafting elegant solutions. Our journey in the digital world is driven by a love for design, technology, and storytelling. We specialize in web development, creating digital assets, and providing key financial and digital services to help others.
+                    </p>
+                </div>
+            </section>
 
-        <!-- Contact Section -->
-        <section id="contact" class="py-20 bg-gray-800">
-            <div class="container mx-auto px-6">
-                <h2 class="text-3xl font-bold text-center mb-4">Get In Touch</h2>
-                <p class="text-gray-400 text-center max-w-2xl mx-auto mb-12">
-                    Whether you need a PAN card, an AEPS ID, or want to start a new business, we're here to help. Reach out to us with your questions.
-                </p>
-                <div class="max-w-lg mx-auto bg-gray-900 p-8 rounded-lg shadow-lg">
-                    <form action="#" method="POST">
-                        <div class="mb-4">
-                            <label for="name" class="block text-gray-300 mb-2">Full Name</label>
-                            <input type="text" id="name" name="name" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+            <!-- Testimonials Section -->
+            <section id="testimonials" class="py-20">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-3xl font-bold text-center mb-12">What Our Clients Say</h2>
+                    <div class="testimonial-carousel relative w-full overflow-hidden">
+                        <div class="testimonial-carousel-track flex space-x-8">
+                            <!-- Helper function to generate stars -->
+                            <script>
+                                const generateStars = () => {
+                                    let starsHTML = '<div class="flex items-center mb-2">';
+                                    for (let i = 0; i < 5; i++) {
+                                        starsHTML += '<svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>';
+                                    }
+                                    starsHTML += '</div>';
+                                    return starsHTML;
+                                };
+                            </script>
+                            
+                            <script>
+                                const testimonials = [
+                                    { name: "Arijit Bose", role: "AEPS User", text: "The service was incredibly fast and professional. I got my PAN card without any hassle. Highly recommended!", avatar: "A", color: "7E22CE" },
+                                    { name: "Priya Das", role: "Bank CSP Owner", text: "Setting up my Bank CSP was a breeze with their help. The team is knowledgeable and supportive.", avatar: "P", color: "1D4ED8" },
+                                    { name: "Sourav Chatterjee", role: "Shopkeeper", text: "The AEPS service has brought more customers to my shop. It's a great additional income source and very reliable.", avatar: "S", color: "059669" },
+                                    { name: "Bipasha Sen", role: "Entrepreneur", text: "I started my eco-friendly bag business with their biopolymer bags. The quality is fantastic!", avatar: "B", color: "C026D3" },
+                                    { name: "Mithun Roy", role: "Valued Client", text: "Needed a PAN card urgently for my son's admission. They got it done in record time. Amazing service!", avatar: "M", color: "EA580C" },
+                                    { name: "Sushmita Ghosh", role: "CSP Agent", text: "The Micro-ATM device is a game-changer. It's compact, the battery lasts forever, and it's so easy to use.", avatar: "S", color: "FACC15", textColor: "000000" }
+                                ];
+
+                                const track = document.querySelector('.testimonial-carousel-track');
+                                const renderTestimonials = () => {
+                                    const allTestimonials = [...testimonials, ...testimonials]; // Duplicate for seamless loop
+                                    let testimonialsHTML = '';
+                                    allTestimonials.forEach(t => {
+                                        testimonialsHTML += `
+                                            <div class="flex-shrink-0 w-64 bg-gray-800 p-6 rounded-lg shadow-lg">
+                                                ${generateStars()}
+                                                <p class="text-gray-400 mb-4" style="min-height: 8rem;">${t.text}</p>
+                                                <div class="flex items-center">
+                                                    <img class="w-12 h-12 rounded-full mr-4" src="https://placehold.co/100x100/${t.color}/${t.textColor || 'FFFFFF'}?text=${t.avatar}" alt="Avatar of ${t.name}">
+                                                    <div>
+                                                        <p class="font-semibold text-white">${t.name}</p>
+                                                        <p class="text-sm text-gray-500">${t.role}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    });
+                                    track.innerHTML = testimonialsHTML;
+                                };
+                                renderTestimonials();
+                            </script>
                         </div>
-                        <div class="mb-4">
-                            <label for="mobile" class="block text-gray-300 mb-2">Mobile Number</label>
-                            <input type="tel" id="mobile" name="mobile" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
-                        </div>
-                        <div class="mb-4">
-                            <label for="email" class="block text-gray-300 mb-2">Email <span class="text-sm text-gray-500">(Optional)</span></label>
-                            <input type="email" id="email" name="email" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label for="state" class="block text-gray-300 mb-2">State</label>
-                                <select id="state" name="state" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
-                                    <option value="" disabled selected>Select State</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="district" class="block text-gray-300 mb-2">District</label>
-                                <select id="district" name="district" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required disabled>
-                                    <option value="" disabled selected>Select District</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <label for="message" class="block text-gray-300 mb-2">Message <span class="text-sm text-gray-500">(Optional)</span></label>
-                            <textarea id="message" name="message" rows="4" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-3 px-8 rounded-lg transition duration-300">Send Message</button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+
+            <!-- Partners Section -->
+            <section id="partners" class="bg-gray-800 py-20">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-3xl font-bold text-center mb-12">Our Official Partners</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 items-center max-w-5xl mx-auto">
+                        <!-- NSDL -->
+                        <div class="bg-gray-900 p-6 rounded-lg flex flex-col items-center justify-center transition hover:bg-gray-700 h-40">
+                            <img src="https://i.postimg.cc/jdRcW5YC/images-removebg-preview.png" alt="NSDL Logo" class="h-16 object-contain">
+                            <p class="mt-4 font-semibold text-gray-300">NSDL</p>
+                        </div>
+                        <!-- Samadhan Web Solution -->
+                        <div class="bg-gray-900 p-6 rounded-lg flex flex-col items-center justify-center transition hover:bg-gray-700 h-40">
+                            <img src="https://i.postimg.cc/FsPy7Vxn/unnamed-removebg-preview.png" alt="Samadhan Web Solution Logo" class="h-16 object-contain">
+                            <p class="mt-4 font-semibold text-gray-300 text-center">Samadhan Web</p>
+                        </div>
+                        <!-- Religare -->
+                        <div class="bg-gray-900 p-6 rounded-lg flex flex-col items-center justify-center transition hover:bg-gray-700 h-40">
+                            <img src="https://i.postimg.cc/02HS828T/religare-enterpris-600-removebg-preview.png" alt="Religare Logo" class="h-16 object-contain">
+                            <p class="mt-4 font-semibold text-gray-300">Religare</p>
+                        </div>
+                        <!-- Fino Payments Bank -->
+                        <div class="bg-gray-900 p-6 rounded-lg flex flex-col items-center justify-center transition hover:bg-gray-700 h-40">
+                            <img src="https://i.postimg.cc/ZRZBfWcd/images-1-removebg-preview.png" alt="Fino Payments Bank Logo" class="h-16 object-contain">
+                            <p class="mt-4 font-semibold text-gray-300">Fino Bank</p>
+                        </div>
+                        <!-- Protean -->
+                        <div class="bg-gray-900 p-6 rounded-lg flex flex-col items-center justify-center transition hover:bg-gray-700 h-40 col-span-2 md:col-span-1">
+                            <img src="https://i.postimg.cc/jjjPKwNY/channels4-profile-removebg-preview.png" alt="Protean Logo" class="h-16 object-contain">
+                            <p class="mt-4 font-semibold text-gray-300">Protean</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- YouTube Channel Section -->
+            <section id="youtube" class="py-20">
+                <div class="container mx-auto px-6">
+                    <div class="bg-gray-800 rounded-2xl shadow-2xl p-8 md:p-12">
+                        <div class="text-center max-w-3xl mx-auto">
+                            <h2 class="text-3xl font-bold mb-4">Check Out Our YouTube Channel!</h2>
+                            <p class="text-gray-400 mb-8">
+                               We provide tutorials and updates on essential digital services like PAN card applications, AEPS transactions, and setting up Bank CSPs. Subscribe to stay informed and learn how to use these services effectively!
+                            </p>
+                        </div>
+                        <div class="max-w-4xl mx-auto">
+                            <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-lg">
+                                <iframe class="w-full h-full" src="https://www.youtube.com/embed/EI2zotmAanQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                        <div class="text-center mt-8">
+                             <a href="https://youtube.com/@withkrishnendu?si=D4W02pZqTf-1mWSH" target="_blank" rel="noopener noreferrer" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 text-lg">
+                                Subscribe Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FAQ Section -->
+            <section id="faq" class="py-20 bg-gray-800">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+                    <div class="max-w-3xl mx-auto">
+                        <!-- FAQ Item 1 -->
+                        <div class="faq-item bg-gray-900 rounded-lg shadow-lg mb-4">
+                            <button class="faq-question w-full text-left p-6 flex justify-between items-center">
+                                <span class="text-lg font-semibold">How long does it take to get a PAN card?</span>
+                                <span class="plus-icon text-2xl">+</span>
+                            </button>
+                            <div class="faq-answer border-t border-gray-700">
+                                <p class="text-gray-400">Typically, a new PAN card is allotted within 48 hours. The physical card is delivered to your address in about 1-2 weeks.</p>
+                            </div>
+                        </div>
+                        <!-- FAQ Item 2 -->
+                        <div class="faq-item bg-gray-900 rounded-lg shadow-lg mb-4">
+                            <button class="faq-question w-full text-left p-6 flex justify-between items-center">
+                                <span class="text-lg font-semibold">What documents are required for an AEPS ID?</span>
+                                <span class="plus-icon text-2xl">+</span>
+                            </button>
+                            <div class="faq-answer border-t border-gray-700">
+                                <p class="text-gray-400">You will need your Aadhaar card, PAN card, and proof of address. We will guide you through the entire KYC process.</p>
+                            </div>
+                        </div>
+                        <!-- FAQ Item 3 -->
+                        <div class="faq-item bg-gray-900 rounded-lg shadow-lg mb-4">
+                            <button class="faq-question w-full text-left p-6 flex justify-between items-center">
+                                <span class="text-lg font-semibold">Is there a fee for setting up a Bank CSP?</span>
+                                <span class="plus-icon text-2xl">+</span>
+                            </button>
+                            <div class="faq-answer border-t border-gray-700">
+                                <p class="text-gray-400">Yes, there is a one-time setup fee which covers the device, training, and registration. Please contact us for the current pricing.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Hidden FAQs -->
+                        <div id="more-faqs" class="hidden">
+                            <div class="faq-item bg-gray-900 rounded-lg shadow-lg mb-4">
+                                <button class="faq-question w-full text-left p-6 flex justify-between items-center">
+                                    <span class="text-lg font-semibold">Can I get a correction done on my existing PAN card?</span>
+                                    <span class="plus-icon text-2xl">+</span>
+                                </button>
+                                <div class="faq-answer border-t border-gray-700">
+                                    <p class="text-gray-400">Yes, we handle all types of PAN card corrections, including name, date of birth, and photo updates. The process is simple and we ensure it's done correctly through the NSDL portal.</p>
+                                </div>
+                            </div>
+                            <div class="faq-item bg-gray-900 rounded-lg shadow-lg mb-4">
+                                <button class="faq-question w-full text-left p-6 flex justify-between items-center">
+                                    <span class="text-lg font-semibold">What are the transaction limits for AEPS?</span>
+                                    <span class="plus-icon text-2xl">+</span>
+                                </button>
+                                <div class="faq-answer border-t border-gray-700">
+                                    <p class="text-gray-400">Transaction limits for AEPS are set by the NPCI and can vary slightly between banks. Generally, the cash withdrawal limit is around ₹10,000 per transaction. We can provide you with the latest guidelines.</p>
+                                </div>
+                            </div>
+                             <div class="faq-item bg-gray-900 rounded-lg shadow-lg mb-4">
+                                <button class="faq-question w-full text-left p-6 flex justify-between items-center">
+                                    <span class="text-lg font-semibold">How much commission can I earn from recharges and bill payments?</span>
+                                    <span class="plus-icon text-2xl">+</span>
+                                </button>
+                                <div class="faq-answer border-t border-gray-700">
+                                    <p class="text-gray-400">Commissions vary by operator and service. We offer a competitive commission structure that allows you to earn a good margin on every transaction. Contact us for a detailed commission chart.</p>
+                                </div>
+                            </div>
+                             <div class="faq-item bg-gray-900 rounded-lg shadow-lg mb-4">
+                                <button class="faq-question w-full text-left p-6 flex justify-between items-center">
+                                    <span class="text-lg font-semibold">Is the Micro-ATM device secure for transactions?</span>
+                                    <span class="plus-icon text-2xl">+</span>
+                                </button>
+                                <div class="faq-answer border-t border-gray-700">
+                                    <p class="text-gray-400">Absolutely. Our Micro-ATM devices are PCI-DSS certified and use end-to-end encryption to ensure that all transaction data is completely secure, protecting both you and your customers.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-6">
+                            <button id="show-more-faqs-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-3 px-8 rounded-lg transition duration-300">Show More Questions</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Section -->
+            <section id="contact" class="py-20">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-3xl font-bold text-center mb-4">Get In Touch</h2>
+                    <p class="text-gray-400 text-center max-w-2xl mx-auto mb-12">
+                        Whether you need a PAN card, an AEPS ID, or want to start a new business, we're here to help. Reach out to us with your questions.
+                    </p>
+                    <div class="max-w-lg mx-auto bg-gray-800 p-8 rounded-lg shadow-lg">
+                        <form action="https://formspree.io/f/your_form_id" method="POST">
+                            <div class="mb-4">
+                                <label for="name" class="block text-gray-300 mb-2">Full Name</label>
+                                <input type="text" id="name" name="name" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="mobile" class="block text-gray-300 mb-2">Mobile Number</label>
+                                <input type="tel" id="mobile" name="mobile" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="email" class="block text-gray-300 mb-2">Email <span class="text-sm text-gray-500">(Optional)</span></label>
+                                <input type="email" id="email" name="email" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label for="state" class="block text-gray-300 mb-2">State</label>
+                                    <select id="state" name="state" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                                        <option value="" disabled selected>Select State</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="district" class="block text-gray-300 mb-2">District</label>
+                                    <select id="district" name="district" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required disabled>
+                                        <option value="" disabled selected>Select District</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label for="message" class="block text-gray-300 mb-2">Message <span class="text-sm text-gray-500">(Optional)</span></label>
+                                <textarea id="message" name="message" rows="4" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-3 px-8 rounded-lg transition duration-300">Send Message</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Services Page Content (Initially Hidden) -->
+        <div id="page-services" class="page-content hidden">
+            <section id="services-list" class="py-20">
+                <div class="container mx-auto px-6">
+                    <div class="text-center mb-16">
+                        <h1 class="text-4xl md:text-5xl font-bold text-white">Our Services</h1>
+                        <p class="text-lg text-gray-400 mt-4 max-w-2xl mx-auto">Providing essential digital and financial services to empower you.</p>
+                    </div>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                         <!-- Service Cards -->
+                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-blue-500/30 transition-shadow duration-300 flex flex-col text-center">
+                            <div class="p-8 flex flex-col flex-grow">
+                                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-gray-900 mx-auto mb-6">
+                                    <img src="https://i.postimg.cc/XJM15mZN/documentation.png" alt="PAN Card Icon" class="w-10 h-10">
+                                </div>
+                                <h3 class="text-2xl font-bold mb-2 text-blue-400">PAN Card Services</h3>
+                                <p class="text-gray-400 mb-4">Official Partner with <span class="font-semibold">NSDL</span></p>
+                                <p class="text-gray-400 mb-6 flex-grow">We provide fast and reliable PAN card applications, corrections, and updates through the official NSDL portal.</p>
+                                <div class="mt-auto">
+                                    <a href="#contact" data-page="home-contact" class="w-full text-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">Inquire Now</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-teal-500/30 transition-shadow duration-300 flex flex-col text-center">
+                            <div class="p-8 flex flex-col flex-grow">
+                                 <div class="flex items-center justify-center h-16 w-16 rounded-full bg-gray-900 mx-auto mb-6">
+                                    <img src="https://i.postimg.cc/zfT6xqYH/fingerprint.png" alt="AEPS Icon" class="w-10 h-10">
+                                </div>
+                                <h3 class="text-2xl font-bold mb-2 text-teal-400">AEPS ID Provider</h3>
+                                <p class="text-gray-400 mb-4">In association with <span class="font-semibold">Samadhan Web Solution</span></p>
+                                <p class="text-gray-400 mb-6 flex-grow">Get your Aadhaar Enabled Payment System (AEPS) ID to offer banking services like cash withdrawal, balance inquiry, and more.</p>
+                                <div class="mt-auto">
+                                    <a href="#contact" data-page="home-contact" class="w-full text-center bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">Inquire Now</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-green-500/30 transition-shadow duration-300 flex flex-col text-center">
+                            <div class="p-8 flex flex-col flex-grow">
+                                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-gray-900 mx-auto mb-6">
+                                    <img src="https://i.postimg.cc/QxPzsFXW/mobile-banking.png" alt="Bank CSP Icon" class="w-10 h-10">
+                                </div>
+                                <h3 class="text-2xl font-bold mb-2 text-green-400">Bank CSP Provider</h3>
+                                <p class="text-gray-400 mb-4">Become a Customer Service Point</p>
+                                <p class="text-gray-400 mb-6 flex-grow">We help you set up a Bank CSP to provide essential banking services in your area and earn commissions.</p>
+                                <div class="mt-auto">
+                                    <a href="#contact" data-page="home-contact" class="w-full text-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">Inquire Now</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/30 transition-shadow duration-300 flex flex-col text-center">
+                            <div class="p-8 flex flex-col flex-grow">
+                                 <div class="flex items-center justify-center h-16 w-16 rounded-full bg-gray-900 mx-auto mb-6">
+                                    <svg class="w-8 h-8 text-purple-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                    </svg>
+                                </div>
+                                <h3 class="text-2xl font-bold mb-2 text-purple-400">Biopolymer Carry Bags</h3>
+                                <p class="text-gray-400 mb-4">Eco-Friendly Business Solutions</p>
+                                <p class="text-gray-400 mb-6 flex-grow">Start your own business with our high-quality, biodegradable biopolymer carry bags. A step towards a greener planet.</p>
+                                 <div class="mt-auto">
+                                     <a href="#contact" data-page="home-contact" class="w-full text-center bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">Inquire Now</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-orange-500/30 transition-shadow duration-300 flex flex-col text-center">
+                            <div class="p-8 flex flex-col flex-grow">
+                                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-gray-900 mx-auto mb-6">
+                                    <svg class="w-8 h-8 text-orange-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <h3 class="text-2xl font-bold mb-2 text-orange-400">Mobile Recharge & Bill Payments</h3>
+                                <p class="text-gray-400 mb-4">One-Stop Payment Solution</p>
+                                <p class="text-gray-400 mb-6 flex-grow">Offer mobile/DTH recharges, electricity, gas, and 30+ other bill payments. Attract more customers and earn on every transaction.</p>
+                                 <div class="mt-auto">
+                                     <a href="#contact" data-page="home-contact" class="w-full text-center bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">Inquire Now</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-yellow-500/30 transition-shadow duration-300 flex flex-col text-center">
+                            <div class="p-8 flex flex-col flex-grow">
+                                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-gray-900 mx-auto mb-6">
+                                    <svg class="w-8 h-8 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                    </svg>
+                                </div>
+                                <h3 class="text-2xl font-bold mb-2 text-yellow-400">Micro-ATM Service</h3>
+                                <p class="text-gray-400 mb-4">Compact Banking Device</p>
+                                <p class="text-gray-400 mb-6 flex-grow">A secure, Bluetooth & NFC enabled device for POS transactions and cash withdrawals. Features a long-lasting, high-capacity battery.</p>
+                                 <div class="mt-auto">
+                                     <a href="#contact" data-page="home-contact" class="w-full text-center bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">Inquire Now</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Blog Page Content (Initially Hidden) -->
+        <div id="page-blog" class="page-content hidden">
+            <section id="blog-list" class="py-20">
+                <div class="container mx-auto px-6">
+                    <div class="text-center mb-16">
+                        <h1 class="text-4xl md:text-5xl font-bold text-white">From Our Blog</h1>
+                        <p class="text-lg text-gray-400 mt-4 max-w-2xl mx-auto">Tips, tutorials, and updates on our digital services.</p>
+                    </div>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+                        <!-- Blog Post 1 -->
+                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                            <div class="bg-indigo-900/30 p-4"><img src="https://i.postimg.cc/D02KYXmR/Untitled-design-1-removebg-preview-1.png" alt="PAN Card Application" class="w-full h-40 object-contain"></div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold mb-2">5 Tips for a Smooth PAN Card Application</h3>
+                                <p class="text-gray-400 mb-4 text-sm">Avoid common mistakes and get your PAN card faster with these essential tips...</p>
+                                <button data-modal="blog-modal-1" class="read-more-btn text-indigo-400 hover:text-indigo-500 font-semibold">Read More &rarr;</button>
+                            </div>
+                        </div>
+                        <!-- Blog Post 2 -->
+                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                            <div class="bg-teal-900/30 p-4"><img src="https://i.postimg.cc/0QbrQh9V/Untitled-design-2-removebg-preview.png" alt="AEPS" class="w-full h-40 object-contain"></div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold mb-2">Understanding AEPS: How It Empowers Rural Banking</h3>
+                                <p class="text-gray-400 mb-4 text-sm">Learn about the Aadhaar Enabled Payment System and its impact on financial inclusion...</p>
+                                <button data-modal="blog-modal-2" class="read-more-btn text-indigo-400 hover:text-indigo-500 font-semibold">Read More &rarr;</button>
+                            </div>
+                        </div>
+                        <!-- Blog Post 3 -->
+                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                            <div class="bg-green-900/30 p-4"><img src="https://i.postimg.cc/05S2BYjK/Untitled-design-3-removebg-preview.png" alt="Bank CSP" class="w-full h-40 object-contain"></div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold mb-2">Is a Bank CSP the Right Business for You?</h3>
+                                <p class="text-gray-400 mb-4 text-sm">Explore the benefits and requirements of starting your own Customer Service Point...</p>
+                                <button data-modal="blog-modal-3" class="read-more-btn text-indigo-400 hover:text-indigo-500 font-semibold">Read More &rarr;</button>
+                            </div>
+                        </div>
+                        <!-- Blog Post 4 -->
+                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                           <div class="bg-yellow-900/30 p-4"><img src="https://i.postimg.cc/DZhV8XQm/Untitled-design-8-removebg-preview.png" alt="Micro-ATM" class="w-full h-40 object-contain"></div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold mb-2">The Power of Micro-ATMs in Modern Retail</h3>
+                                <p class="text-gray-400 mb-4 text-sm">Discover how a compact Micro-ATM device can increase footfall and revenue for your business...</p>
+                                <button data-modal="blog-modal-4" class="read-more-btn text-indigo-400 hover:text-indigo-500 font-semibold">Read More &rarr;</button>
+                            </div>
+                        </div>
+                         <!-- Blog Post 5 -->
+                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                            <div class="bg-orange-900/30 p-4"><img src="https://i.postimg.cc/rmrc7TV2/Untitled-design-4-removebg-preview.png" alt="Mobile Recharge" class="w-full h-40 object-contain"></div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold mb-2">Maximizing Profits with Bill Pay Services</h3>
+                                <p class="text-gray-400 mb-4 text-sm">A guide to offering diverse bill payment services and boosting your income...</p>
+                                <button data-modal="blog-modal-5" class="read-more-btn text-indigo-400 hover:text-indigo-500 font-semibold">Read More &rarr;</button>
+                            </div>
+                        </div>
+                        <!-- Blog Post 6 -->
+                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                            <div class="bg-purple-900/30 p-4"><img src="https://i.postimg.cc/jSSTtPxX/Untitled-design-5-removebg-preview.png" alt="Eco-friendly bags" class="w-full h-40 object-contain"></div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold mb-2">The Rise of Eco-Friendly Business Solutions</h3>
+                                <p class="text-gray-400 mb-4 text-sm">Why biopolymer bags are a smart and sustainable choice for today's businesses...</p>
+                                <button data-modal="blog-modal-6" class="read-more-btn text-indigo-400 hover:text-indigo-500 font-semibold">Read More &rarr;</button>
+                            </div>
+                        </div>
+                        <!-- Blog Post 7 -->
+                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                            <div class="bg-blue-900/30 p-4"><img src="https://i.postimg.cc/m28xXkYF/Untitled-design-6-removebg-preview.png" alt="Digital KYC" class="w-full h-40 object-contain"></div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold mb-2">Navigating Digital KYC: A Simple Guide</h3>
+                                <p class="text-gray-400 mb-4 text-sm">Understand the importance of KYC and how we simplify the process for you...</p>
+                                <button data-modal="blog-modal-7" class="read-more-btn text-indigo-400 hover:text-indigo-500 font-semibold">Read More &rarr;</button>
+                            </div>
+                        </div>
+                        <!-- Blog Post 8 -->
+                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                            <div class="bg-red-900/30 p-4"><img src="https://i.postimg.cc/8z02GYnp/Untitled-design-7.png" alt="Digital Security" class="w-full h-40 object-contain"></div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold mb-2">Your Security is Our Priority</h3>
+                                <p class="text-gray-400 mb-4 text-sm">Learn about the security measures we take to protect your data and transactions...</p>
+                                <button data-modal="blog-modal-8" class="read-more-btn text-indigo-400 hover:text-indigo-500 font-semibold">Read More &rarr;</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -169,84 +568,390 @@
         </div>
     </footer>
 
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-indigo-500 hover:bg-indigo-600 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center hidden">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+    </button>
+
+    <!-- Login/Signup Modal -->
+    <div id="auth-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md relative">
+            <button id="close-modal-button" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="flex border-b border-gray-700 mb-6">
+                <button id="signin-tab" class="flex-1 py-3 text-lg font-semibold text-white border-b-2 border-indigo-500">Sign In</button>
+                <button id="signup-tab" class="flex-1 py-3 text-lg font-semibold text-gray-500">Sign Up</button>
+            </div>
+            <form id="signin-form" action="#" method="POST">
+                <div class="mb-4">
+                    <label for="signin-email" class="block text-gray-300 mb-2">Email Address</label>
+                    <input type="email" id="signin-email" name="email" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                </div>
+                <div class="mb-6">
+                    <label for="signin-password" class="block text-gray-300 mb-2">Password</label>
+                    <input type="password" id="signin-password" name="password" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300">Sign In</button>
+                </div>
+            </form>
+            <form id="signup-form" action="#" method="POST" class="hidden">
+                <div class="mb-4">
+                    <label for="signup-name" class="block text-gray-300 mb-2">Full Name</label>
+                    <input type="text" id="signup-name" name="name" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                </div>
+                <div class="mb-4">
+                    <label for="signup-email" class="block text-gray-300 mb-2">Email Address</label>
+                    <input type="email" id="signup-email" name="email" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                </div>
+                <div class="mb-4">
+                    <label for="signup-password" class="block text-gray-300 mb-2">Password</label>
+                    <input type="password" id="signup-password" name="password" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                </div>
+                 <div class="mb-6">
+                    <label for="signup-confirm-password" class="block text-gray-300 mb-2">Confirm Password</label>
+                    <input type="password" id="signup-confirm-password" name="confirm-password" class="w-full bg-gray-700 border border-gray-600 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Blog Modals -->
+    <div id="blog-modal-1" class="blog-modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-3xl relative">
+            <button class="close-blog-modal-btn absolute top-4 right-4 text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="blog-modal-content text-gray-300">
+                <h2 class="text-3xl font-bold mb-4 text-white">5 Tips for a Smooth PAN Card Application</h2>
+                <p class="mb-4">Applying for a PAN card is a crucial step for financial transactions in India. To ensure your application goes through without a hitch, follow these five essential tips:</p>
+                <ul class="list-disc list-inside space-y-2 mb-4">
+                    <li><strong>Double-Check Your Details:</strong> Ensure your name, father's name, and date of birth match exactly with your official documents like Aadhaar. Mismatches are the most common cause of rejection.</li>
+                    <li><strong>Use a Clear Photograph:</strong> Your photograph should be recent, in color, with a white background. Avoid selfies or blurry images.</li>
+                    <li><strong>Correct Signature:</strong> Sign within the box provided on the application form. Your signature should be clear and not touch the borders of the box.</li>
+                    <li><strong>Provide Accurate Address:</strong> The address you provide is where your physical PAN card will be delivered. Ensure it is complete with a landmark and correct PIN code.</li>
+                    <li><strong>Keep Documents Ready:</strong> Have clear copies of your Proof of Identity (POI), Proof of Address (POA), and Proof of Date of Birth (DOB) ready for submission.</li>
+                </ul>
+                <p>By following these simple steps, you can avoid delays and get your PAN card quickly and efficiently. At Krittika Digital Assist, we guide you through every step of this process.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="blog-modal-2" class="blog-modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-3xl relative">
+            <button class="close-blog-modal-btn absolute top-4 right-4 text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="blog-modal-content text-gray-300">
+                <h2 class="text-3xl font-bold mb-4 text-white">Understanding AEPS: How It Empowers Rural Banking</h2>
+                <p class="mb-4">The Aadhaar Enabled Payment System (AEPS) is a revolutionary payment service that allows bank customers to use Aadhaar as their identity to access their Aadhaar-enabled bank account and perform basic banking transactions like balance enquiry, cash withdrawal, and remittances through a Business Correspondent.</p>
+                <p class="mb-4"><strong>How does it work?</strong> AEPS is simple. You don't need your debit card, PIN, or even a smartphone. All you need is your Aadhaar number and your fingerprint. This makes it incredibly accessible, especially for people in rural or remote areas where traditional banking infrastructure is limited.</p>
+                <p class="font-semibold text-white mb-2">Key benefits of AEPS:</p>
+                <ul class="list-disc list-inside space-y-2 mb-4">
+                    <li><strong>Financial Inclusion:</strong> It brings banking services to the doorsteps of those in underserved areas.</li>
+                    <li><strong>Ease of Use:</strong> Biometric authentication makes it easy for everyone, regardless of literacy level.</li>
+                    <li><strong>Security:</strong> Fingerprint authentication is a highly secure method, reducing the risk of fraud.</li>
+                    <li><strong>Interoperability:</strong> It works across different banks, so you can access your account from any AEPS point.</li>
+                </ul>
+                <p>By becoming an AEPS agent, you can provide these vital services to your community and earn a commission on every transaction, making it a valuable addition to any small business.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="blog-modal-3" class="blog-modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-3xl relative">
+            <button class="close-blog-modal-btn absolute top-4 right-4 text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="blog-modal-content text-gray-300">
+                <h2 class="text-3xl font-bold mb-4 text-white">Is a Bank CSP the Right Business for You?</h2>
+                <p class="mb-4">A Bank Customer Service Point (CSP), also known as a Bank Mitra, is an agent appointed by a bank to provide banking services in areas where opening a traditional branch is not feasible. If you're looking for a respectable and rewarding business opportunity, a Bank CSP could be an excellent choice.</p>
+                 <p class="font-semibold text-white mb-2">What does a CSP do?</p>
+                <ul class="list-disc list-inside space-y-2 mb-4">
+                    <li>Opening no-frills bank accounts.</li>
+                    <li>Cash deposits and withdrawals.</li>
+                    <li>Money transfers to other bank accounts.</li>
+                    <li>Providing services like recurring deposits and insurance.</li>
+                </ul>
+                <p class="font-semibold text-white mb-2">Why should you consider it?</p>
+                 <ul class="list-disc list-inside space-y-2 mb-4">
+                    <li><strong>Low Investment:</strong> It requires minimal setup cost compared to other businesses.</li>
+                    <li><strong>Steady Income:</strong> You earn a commission from the bank for every transaction.</li>
+                    <li><strong>Serve Your Community:</strong> You play a crucial role in providing essential financial services to your locality.</li>
+                    <li><strong>Growth Potential:</strong> As more people in your area become financially active, your business grows.</li>
+                </ul>
+                <p>If you have good social standing and a desire to help your community while running a profitable business, becoming a Bank CSP is a path worth exploring. We provide complete assistance in setting up your CSP from start to finish.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add other 5 blog modals similarly -->
+    <div id="blog-modal-4" class="blog-modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-3xl relative">
+            <button class="close-blog-modal-btn absolute top-4 right-4 text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="blog-modal-content text-gray-300">
+                <h2 class="text-3xl font-bold mb-4 text-white">The Power of Micro-ATMs in Modern Retail</h2>
+                <p class="mb-4">In today's digital age, providing convenience is key to attracting and retaining customers. A Micro-ATM is a small, portable device that allows retailers to offer basic ATM services, turning their shop into a mini banking point. This simple addition can have a massive impact on your business.</p>
+                <p class="font-semibold text-white mb-2">Key Advantages for Retailers:</p>
+                <ul class="list-disc list-inside space-y-2 mb-4">
+                    <li><strong>Increased Footfall:</strong> Customers looking for cash withdrawal services will visit your store, giving you an opportunity to make additional sales.</li>
+                    <li><strong>Extra Revenue Stream:</strong> You earn a commission on every transaction processed through the Micro-ATM.</li>
+                    <li><strong>Enhanced Customer Loyalty:</strong> By offering essential services, you become a one-stop-shop for your customers' needs, building trust and loyalty.</li>
+                    <li><strong>Secure and Easy to Use:</strong> Our devices are secure, easy to operate, and connect via Bluetooth to your smartphone, making the process seamless.</li>
+                </ul>
+                <p>Integrating a Micro-ATM is a low-cost, high-return investment for any retail business. It not only boosts your income but also establishes your shop as an essential service point in the community.</p>
+            </div>
+        </div>
+    </div>
+    <div id="blog-modal-5" class="blog-modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-3xl relative">
+            <button class="close-blog-modal-btn absolute top-4 right-4 text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="blog-modal-content text-gray-300">
+                <h2 class="text-3xl font-bold mb-4 text-white">Maximizing Profits with Bill Pay Services</h2>
+                <p class="mb-4">Every household has bills to pay – electricity, water, gas, DTH, mobile recharges, and more. By offering a comprehensive bill payment service from your shop, you can tap into a massive, recurring market and significantly boost your profits.</p>
+                <p class="font-semibold text-white mb-2">Why Offer Bill Payment Services?</p>
+                <ul class="list-disc list-inside space-y-2 mb-4">
+                    <li><strong>Constant Demand:</strong> Bills are a monthly necessity, ensuring a steady stream of customers.</li>
+                    <li><strong>Attract New Customers:</strong> People who come to pay bills are likely to purchase other items from your store.</li>
+                    <li><strong>High Transaction Volume:</strong> With over 30+ types of bill payments available through our portal, you can cater to a wide range of needs.</li>
+                    <li><strong>Build Trust:</strong> Becoming the go-to person for essential payments builds your reputation as a reliable local service provider.</li>
+                </ul>
+                <p>Our platform makes it incredibly easy to manage all these services from a single interface. With attractive commissions on every transaction, a bill payment service is one of the easiest ways to add a new, profitable vertical to your existing business.</p>
+            </div>
+        </div>
+    </div>
+    <div id="blog-modal-6" class="blog-modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-3xl relative">
+            <button class="close-blog-modal-btn absolute top-4 right-4 text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="blog-modal-content text-gray-300">
+                <h2 class="text-3xl font-bold mb-4 text-white">The Rise of Eco-Friendly Business Solutions</h2>
+                <p class="mb-4">As environmental awareness grows, consumers are actively choosing businesses that are sustainable and responsible. One of the simplest yet most impactful changes a business can make is switching to eco-friendly packaging. This is where biopolymer carry bags come in.</p>
+                <p class="font-semibold text-white mb-2">What are Biopolymer Bags?</p>
+                <p class="mb-4">Unlike traditional plastic bags that take hundreds of years to decompose, biopolymer bags are made from natural, renewable resources like corn starch. They are 100% biodegradable and compostable, breaking down into natural elements without harming the environment.</p>
+                <p class="font-semibold text-white mb-2">Benefits for Your Business:</p>
+                <ul class="list-disc list-inside space-y-2 mb-4">
+                    <li><strong>Positive Brand Image:</strong> Show your customers you care about the planet, enhancing your brand reputation.</li>
+                    <li><strong>Meet Regulations:</strong> Stay ahead of plastic bans and regulations being implemented across India.</li>
+                    <li><strong>Attract Conscious Consumers:</strong> A growing segment of customers prefers to shop from eco-friendly businesses.</li>
+                    <li><strong>High Quality:</strong> Our biopolymer bags are strong, durable, and offer a premium feel.</li>
+                </ul>
+                <p>Making the switch to biopolymer bags is not just good for the planet; it's a smart business decision that aligns your brand with the values of modern consumers.</p>
+            </div>
+        </div>
+    </div>
+    <div id="blog-modal-7" class="blog-modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-3xl relative">
+            <button class="close-blog-modal-btn absolute top-4 right-4 text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="blog-modal-content text-gray-300">
+                <h2 class="text-3xl font-bold mb-4 text-white">Navigating Digital KYC: A Simple Guide</h2>
+                <p class="mb-4">KYC, or "Know Your Customer," is a mandatory process for all financial services. It involves verifying the identity and address of a customer. With the advent of digital services, the KYC process has become much simpler and faster, but it's important to understand why it's necessary and how it works.</p>
+                <p class="font-semibold text-white mb-2">Why is KYC Important?</p>
+                <ul class="list-disc list-inside space-y-2 mb-4">
+                    <li><strong>Prevents Fraud:</strong> It helps financial institutions ensure that services are not being used for illegal activities like money laundering.</li>
+                    <li><strong>Protects You:</strong> By verifying your identity, KYC ensures that no one else can open an account or perform transactions in your name.</li>
+                    <li><strong>Regulatory Compliance:</strong> It is a legal requirement set by the Reserve Bank of India (RBI).</li>
+                </ul>
+                 <p class="font-semibold text-white mb-2">How We Simplify KYC:</p>
+                 <p>Whether you are applying for an AEPS ID or a Bank CSP, we guide you through the digital KYC process. This typically involves submitting your Aadhaar and PAN details and completing a biometric verification. Our streamlined process ensures your application is processed quickly and securely, without the need for extensive physical paperwork.</p>
+            </div>
+        </div>
+    </div>
+    <div id="blog-modal-8" class="blog-modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-3xl relative">
+            <button class="close-blog-modal-btn absolute top-4 right-4 text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="blog-modal-content text-gray-300">
+                <h2 class="text-3xl font-bold mb-4 text-white">Your Security is Our Priority</h2>
+                <p class="mb-4">In the world of digital finance, security is paramount. We understand that you and your customers are entrusting us with sensitive information and hard-earned money. That's why we have implemented multiple layers of security to ensure every transaction is safe and your data is protected.</p>
+                <p class="font-semibold text-white mb-2">Our Security Measures:</p>
+                <ul class="list-disc list-inside space-y-2 mb-4">
+                    <li><strong>End-to-End Encryption:</strong> All data transmitted through our platforms, from AEPS transactions to bill payments, is encrypted, making it unreadable to unauthorized parties.</li>
+                    <li><strong>Biometric Authentication:</strong> For services like AEPS, we rely on secure fingerprint verification, which is one of the safest ways to authenticate a user.</li>
+                    <li><strong>Secure Devices:</strong> Our Micro-ATM devices are compliant with the latest security standards, such as PCI-DSS, to protect cardholder data.</li>
+                    <li><strong>Data Privacy:</strong> We adhere to strict data privacy policies, ensuring your personal information is never shared without your consent.</li>
+                </ul>
+                <p>You can be confident that when you use our services, you are operating on a secure and reliable platform. We are committed to maintaining the highest standards of security to build and maintain your trust.</p>
+            </div>
+        </div>
+    </div>
+
+
     <script>
-        // Data for states and districts
-        const stateDistrictData = {
-            "Andaman and Nicobar Islands": ["Nicobar", "North and Middle Andaman", "South Andaman"],
-            "Andhra Pradesh": ["Anantapur", "Chittoor", "East Godavari", "Guntur", "Krishna", "Kurnool", "Prakasam", "Srikakulam", "Sri Potti Sriramulu Nellore", "Visakhapatnam", "Vizianagaram", "West Godavari", "Y.S.R. Kadapa"],
-            "Arunachal Pradesh": ["Anjaw", "Changlang", "Dibang Valley", "East Kameng", "East Siang", "Kamle", "Kra Daadi", "Kurung Kumey", "Lepa Rada", "Lohit", "Longding", "Lower Dibang Valley", "Lower Siang", "Lower Subansiri", "Namsai", "Pakke Kessang", "Papum Pare", "Shi Yomi", "Siang", "Tawang", "Tirap", "Upper Siang", "Upper Subansiri", "West Kameng", "West Siang"],
-            "Assam": ["Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo", "Chirang", "Darrang", "Dhemaji", "Dhubri", "Dibrugarh", "Dima Hasao", "Goalpara", "Golaghat", "Hailakandi", "Hojai", "Jorhat", "Kamrup", "Kamrup Metropolitan", "Karbi Anglong", "Karimganj", "Kokrajhar", "Lakhimpur", "Majuli", "Morigaon", "Nagaon", "Nalbari", "Sivasagar", "Sonitpur", "South Salmara-Mankachar", "Tinsukia", "Udalguri", "West Karbi Anglong"],
-            "Bihar": ["Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur", "Bhojpur", "Buxar", "Darbhanga", "East Champaran", "Gaya", "Gopalganj", "Jamui", "Jehanabad", "Kaimur", "Katihar", "Khagaria", "Kishanganj", "Lakhisarai", "Madhepura", "Madhubani", "Munger", "Muzaffarpur", "Nalanda", "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur", "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul", "Vaishali", "West Champaran"],
-            "Chandigarh": ["Chandigarh"],
-            "Chhattisgarh": ["Balod", "Baloda Bazar", "Balrampur", "Bastar", "Bemetara", "Bijapur", "Bilaspur", "Dantewada", "Dhamtari", "Durg", "Gariaband", "Gaurela Pendra Marwahi", "Janjgir-Champa", "Jashpur", "Kanker", "Kawardha", "Kondagaon", "Korba", "Koriya", "Mahasamund", "Mungeli", "Narayanpur", "Raigarh", "Raipur", "Rajnandgaon", "Sukma", "Surajpur", "Surguja"],
-            "Dadra and Nagar Haveli and Daman and Diu": ["Daman", "Diu", "Dadra and Nagar Haveli"],
-            "Delhi": ["Central Delhi", "East Delhi", "New Delhi", "North Delhi", "North East Delhi", "North West Delhi", "Shahdara", "South Delhi", "South East Delhi", "South West Delhi", "West Delhi"],
-            "Goa": ["North Goa", "South Goa"],
-            "Gujarat": ["Ahmedabad", "Amreli", "Anand", "Aravalli", "Banaskantha", "Bharuch", "Bhavnagar", "Botad", "Chhota Udaipur", "Dahod", "Dang", "Devbhoomi Dwarka", "Gandhinagar", "Gir Somnath", "Jamnagar", "Junagadh", "Kheda", "Kutch", "Mahisagar", "Mehsana", "Morbi", "Narmada", "Navsari", "Panchmahal", "Patan", "Porbandar", "Rajkot", "Sabarkantha", "Surat", "Surendranagar", "Tapi", "Vadodara", "Valsad"],
-            "Haryana": ["Ambala", "Bhiwani", "Charkhi Dadri", "Faridabad", "Fatehabad", "Gurugram", "Hisar", "Jhajjar", "Jind", "Kaithal", "Karnal", "Kurukshetra", "Mahendragarh", "Nuh", "Palwal", "Panchkula", "Panipat", "Rewari", "Rohtak", "Sirsa", "Sonipat", "Yamunanagar"],
-            "Himachal Pradesh": ["Bilaspur", "Chamba", "Hamirpur", "Kangra", "Kinnaur", "Kullu", "Lahaul and Spiti", "Mandi", "Shimla", "Sirmaur", "Solan", "Una"],
-            "Jammu and Kashmir": ["Anantnag", "Bandipora", "Baramulla", "Budgam", "Doda", "Ganderbal", "Jammu", "Kathua", "Kishtwar", "Kulgam", "Kupwara", "Poonch", "Pulwama", "Rajouri", "Ramban", "Reasi", "Samba", "Shopian", "Srinagar", "Udhampur"],
-            "Jharkhand": ["Bokaro", "Chatra", "Deoghar", "Dhanbad", "Dumka", "East Singhbhum", "Garhwa", "Giridih", "Godda", "Gumla", "Hazaribagh", "Jamtara", "Khunti", "Koderma", "Latehar", "Lohardaga", "Pakur", "Palamu", "Ramgarh", "Ranchi", "Sahebganj", "Seraikela Kharsawan", "Simdega", "West Singhbhum"],
-            "Karnataka": ["Bagalkot", "Ballari", "Belagavi", "Bengaluru Rural", "Bengaluru Urban", "Bidar", "Chamarajanagar", "Chikballapur", "Chikkamagaluru", "Chitradurga", "Dakshina Kannada", "Davanagere", "Dharwad", "Gadag", "Hassan", "Haveri", "Kalaburagi", "Kodagu", "Kolar", "Koppal", "Mandya", "Mysuru", "Raichur", "Ramanagara", "Shivamogga", "Tumakuru", "Udupi", "Uttara Kannada", "Vijayapura", "Yadgir"],
-            "Kerala": ["Alappuzha", "Ernakulam", "Idukki", "Kannur", "Kasaragod", "Kollam", "Kottayam", "Kozhikode", "Malappuram", "Palakkad", "Pathanamthitta", "Thiruvananthapuram", "Thrissur", "Wayanad"],
-            "Ladakh": ["Kargil", "Leh"],
-            "Lakshadweep": ["Lakshadweep"],
-            "Madhya Pradesh": ["Agar Malwa", "Alirajpur", "Anuppur", "Ashoknagar", "Balaghat", "Barwani", "Betul", "Bhind", "Bhopal", "Burhanpur", "Chhatarpur", "Chhindwara", "Damoh", "Datia", "Dewas", "Dhar", "Dindori", "Guna", "Gwalior", "Harda", "Hoshangabad", "Indore", "Jabalpur", "Jhabua", "Katni", "Khandwa", "Khargone", "Mandla", "Mandsaur", "Morena", "Narsinghpur", "Neemuch", "Panna", "Raisen", "Rajgarh", "Ratlam", "Rewa", "Sagar", "Satna", "Sehore", "Seoni", "Shahdol", "Shajapur", "Sheopur", "Shivpuri", "Sidhi", "Singrauli", "Tikamgarh", "Ujjain", "Umaria", "Vidisha"],
-            "Maharashtra": ["Ahmednagar", "Akola", "Amravati", "Aurangabad", "Beed", "Bhandara", "Buldhana", "Chandrapur", "Dhule", "Gadchiroli", "Gondia", "Hingoli", "Jalgaon", "Jalna", "Kolhapur", "Latur", "Mumbai City", "Mumbai Suburban", "Nagpur", "Nanded", "Nandurbar", "Nashik", "Osmanabad", "Palghar", "Parbhani", "Pune", "Raigad", "Ratnagiri", "Sangli", "Satara", "Sindhudurg", "Solapur", "Thane", "Wardha", "Washim", "Yavatmal"],
-            "Manipur": ["Bishnupur", "Chandel", "Churachandpur", "Imphal East", "Imphal West", "Jiribam", "Kakching", "Kamjong", "Kangpokpi", "Noney", "Pherzawl", "Senapati", "Tamenglong", "Tengnoupal", "Thoubal", "Ukhrul"],
-            "Meghalaya": ["East Garo Hills", "East Jaintia Hills", "East Khasi Hills", "North Garo Hills", "Ri Bhoi", "South Garo Hills", "South West Garo Hills", "South West Khasi Hills", "West Garo Hills", "West Jaintia Hills", "West Khasi Hills"],
-            "Mizoram": ["Aizawl", "Champhai", "Hnahthial", "Kolasib", "Lawngtlai", "Lunglei", "Mamit", "Saiha", "Saitual", "Serchhip"],
-            "Nagaland": ["Dimapur", "Kiphire", "Kohima", "Longleng", "Mokokchung", "Mon", "Peren", "Phek", "Tuensang", "Wokha", "Zunheboto"],
-            "Odisha": ["Angul", "Balangir", "Balasore", "Bargarh", "Bhadrak", "Boudh", "Cuttack", "Deogarh", "Dhenkanal", "Gajapati", "Ganjam", "Jagatsinghpur", "Jajpur", "Jharsuguda", "Kalahandi", "Kandhamal", "Kendrapara", "Kendujhar", "Khordha", "Koraput", "Malkangiri", "Mayurbhanj", "Nabarangpur", "Nayagarh", "Nuapada", "Puri", "Rayagada", "Sambalpur", "Sonepur", "Sundargarh"],
-            "Puducherry": ["Karaikal", "Mahe", "Puducherry", "Yanam"],
-            "Punjab": ["Amritsar", "Barnala", "Bathinda", "Faridkot", "Fatehgarh Sahib", "Fazilka", "Ferozepur", "Gurdaspur", "Hoshiarpur", "Jalandhar", "Kapurthala", "Ludhiana", "Mansa", "Moga", "Pathankot", "Patiala", "Rupnagar", "S.A.S. Nagar", "Sangrur", "Shahid Bhagat Singh Nagar", "Sri Muktsar Sahib", "Tarn Taran"],
-            "Rajasthan": ["Ajmer", "Alwar", "Banswara", "Baran", "Barmer", "Bharatpur", "Bhilwara", "Bikaner", "Bundi", "Chittorgarh", "Churu", "Dausa", "Dholpur", "Dungarpur", "Hanumangarh", "Jaipur", "Jaisalmer", "Jalore", "Jhalawar", "Jhunjhunu", "Jodhpur", "Karauli", "Kota", "Nagaur", "Pali", "Pratapgarh", "Rajsamand", "Sawai Madhopur", "Sikar", "Sirohi", "Sri Ganganagar", "Tonk", "Udaipur"],
-            "Sikkim": ["East Sikkim", "North Sikkim", "South Sikkim", "West Sikkim"],
-            "Tamil Nadu": ["Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", "Dindigul", "Erode", "Kallakurichi", "Kanchipuram", "Kanyakumari", "Karur", "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris", "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga", "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli", "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore", "Viluppuram", "Virudhunagar"],
-            "Telangana": ["Adilabad", "Bhadradri Kothagudem", "Hyderabad", "Jagtial", "Jangaon", "Jayashankar Bhupalpally", "Jogulamba Gadwal", "Kamareddy", "Karimnagar", "Khammam", "Komaram Bheem", "Mahabubabad", "Mahbubnagar", "Mancherial", "Medak", "Medchal-Malkajgiri", "Mulugu", "Nagarkurnool", "Nalgonda", "Narayanpet", "Nirmal", "Nizamabad", "Peddapalli", "Rajanna Sircilla", "Ranga Reddy", "Sangareddy", "Siddipet", "Suryapet", "Vikarabad", "Wanaparthy", "Warangal Rural", "Warangal Urban", "Yadadri Bhuvanagiri"],
-            "Tripura": ["Dhalai", "Gomati", "Khowai", "North Tripura", "Sepahijala", "South Tripura", "Unakoti", "West Tripura"],
-            "Uttar Pradesh": ["Agra", "Aligarh", "Ambedkar Nagar", "Amethi", "Amroha", "Auraiya", "Ayodhya", "Azamgarh", "Baghpat", "Bahraich", "Ballia", "Balrampur", "Banda", "Barabanki", "Bareilly", "Basti", "Bhadohi", "Bijnor", "Budaun", "Bulandshahr", "Chandauli", "Chitrakoot", "Deoria", "Etah", "Etawah", "Farrukhabad", "Fatehpur", "Firozabad", "Gautam Buddha Nagar", "Ghaziabad", "Ghazipur", "Gonda", "Gorakhpur", "Hamirpur", "Hapur", "Hardoi", "Hathras", "Jalaun", "Jaunpur", "Jhansi", "Kannauj", "Kanpur Dehat", "Kanpur Nagar", "Kasganj", "Kaushambi", "Kheri", "Kushinagar", "Lalitpur", "Lucknow", "Maharajganj", "Mahoba", "Mainpuri", "Mathura", "Mau", "Meerut", "Mirzapur", "Moradabad", "Muzaffarnagar", "Pilibhit", "Pratapgarh", "Prayagraj", "Raebareli", "Rampur", "Saharanpur", "Sambhal", "Sant Kabir Nagar", "Shahjahanpur", "Shamli", "Shravasti", "Siddharthnagar", "Sitapur", "Sonbhadra", "Sultanpur", "Unnao", "Varanasi"],
-            "Uttarakhand": ["Almora", "Bageshwar", "Chamoli", "Champawat", "Dehradun", "Haridwar", "Nainital", "Pauri Garhwal", "Pithoragarh", "Rudraprayag", "Tehri Garhwal", "Udham Singh Nagar", "Uttarkashi"],
-            "West Bengal": ["Alipurduar", "Bankura", "Birbhum", "Cooch Behar", "Dakshin Dinajpur", "Darjeeling", "Hooghly", "Howrah", "Jalpaiguri", "Jhargram", "Kalimpong", "Kolkata", "Malda", "Murshidabad", "Nadia", "North 24 Parganas", "Paschim Bardhaman", "Paschim Medinipur", "Purba Bardhaman", "Purba Medinipur", "Purulia", "South 24 Parganas", "Uttar Dinajpur"]
-        };
+        document.addEventListener('DOMContentLoaded', () => {
+            const pageContents = document.querySelectorAll('.page-content');
+            const navLinks = document.querySelectorAll('a[data-page]');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const stateSelect = document.getElementById('state');
+            const districtSelect = document.getElementById('district');
+            const faqItems = document.querySelectorAll('.faq-item');
+            const backToTopButton = document.getElementById('back-to-top');
+            const authModal = document.getElementById('auth-modal');
+            const signinNavLinks = [document.getElementById('signin-nav-link'), document.getElementById('signin-mobile-link')];
+            const closeModalButton = document.getElementById('close-modal-button');
+            const signinTab = document.getElementById('signin-tab');
+            const signupTab = document.getElementById('signup-tab');
+            const signinForm = document.getElementById('signin-form');
+            const signupForm = document.getElementById('signup-form');
+            const showMoreFaqsBtn = document.getElementById('show-more-faqs-btn');
+            const moreFaqsContainer = document.getElementById('more-faqs');
+            const readMoreBtns = document.querySelectorAll('.read-more-btn');
+            const blogModals = document.querySelectorAll('.blog-modal');
+            const closeBlogModalBtns = document.querySelectorAll('.close-blog-modal-btn');
 
-        // Mobile menu toggle for index page
-        const mobileMenuButtonIndex = document.getElementById('mobile-menu-button-index');
-        const mobileMenuIndex = document.getElementById('mobile-menu-index');
-        mobileMenuButtonIndex.addEventListener('click', () => {
-            mobileMenuIndex.classList.toggle('hidden');
-        });
+            // Page Navigation
+            const showPage = (pageId, anchor = null) => {
+                pageContents.forEach(page => page.classList.add('hidden'));
+                const targetPage = document.getElementById(`page-${pageId}`);
+                if (targetPage) {
+                    targetPage.classList.remove('hidden');
+                    if (anchor) {
+                        setTimeout(() => document.getElementById(anchor)?.scrollIntoView({ behavior: 'smooth' }), 0);
+                    } else {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                }
+            };
 
-        // Populate State and District Dropdowns
-        const stateSelect = document.getElementById('state');
-        const districtSelect = document.getElementById('district');
-
-        // Populate states
-        for (const state in stateDistrictData) {
-            const option = document.createElement('option');
-            option.value = state;
-            option.textContent = state;
-            stateSelect.appendChild(option);
-        }
-
-        // Event listener for state change
-        stateSelect.addEventListener('change', (e) => {
-            const selectedState = e.target.value;
-            // Clear previous district options
-            districtSelect.innerHTML = '<option value="" disabled selected>Select District</option>';
-
-            if (selectedState) {
-                districtSelect.disabled = false;
-                const districts = stateDistrictData[selectedState];
-                districts.forEach(district => {
-                    const option = document.createElement('option');
-                    option.value = district;
-                    option.textContent = district;
-                    districtSelect.appendChild(option);
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    let pageId = link.dataset.page;
+                    let anchor = null;
+                    if (pageId.startsWith('home-')) {
+                        [pageId, anchor] = pageId.split('-');
+                    }
+                    showPage(pageId, anchor);
+                    mobileMenu.classList.add('hidden');
                 });
-            } else {
-                districtSelect.disabled = true;
+            });
+
+            // Mobile Menu
+            mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+
+            // State/District Dropdown
+            const stateDistrictData = {
+                "Andaman and Nicobar Islands": ["Nicobar", "North and Middle Andaman", "South Andaman"], "Andhra Pradesh": ["Anantapur", "Chittoor", "East Godavari", "Guntur", "Krishna", "Kurnool", "Prakasam", "Srikakulam", "Sri Potti Sriramulu Nellore", "Visakhapatnam", "Vizianagaram", "West Godavari", "Y.S.R. Kadapa"], "Arunachal Pradesh": ["Anjaw", "Changlang", "Dibang Valley", "East Kameng", "East Siang", "Kamle", "Kra Daadi", "Kurung Kumey", "Lepa Rada", "Lohit", "Longding", "Lower Dibang Valley", "Lower Siang", "Lower Subansiri", "Namsai", "Pakke Kessang", "Papum Pare", "Shi Yomi", "Siang", "Tawang", "Tirap", "Upper Siang", "Upper Subansiri", "West Kameng", "West Siang"], "Assam": ["Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo", "Chirang", "Darrang", "Dhemaji", "Dhubri", "Dibrugarh", "Dima Hasao", "Goalpara", "Golaghat", "Hailakandi", "Hojai", "Jorhat", "Kamrup", "Kamrup Metropolitan", "Karbi Anglong", "Karimganj", "Kokrajhar", "Lakhimpur", "Majuli", "Morigaon", "Nagaon", "Nalbari", "Sivasagar", "Sonitpur", "South Salmara-Mankachar", "Tinsukia", "Udalguri", "West Karbi Anglong"], "Bihar": ["Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur", "Bhojpur", "Buxar", "Darbhanga", "East Champaran", "Gaya", "Gopalganj", "Jamui", "Jehanabad", "Kaimur", "Katihar", "Khagaria", "Kishanganj", "Lakhisarai", "Madhepura", "Madhubani", "Munger", "Muzaffarpur", "Nalanda", "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur", "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul", "Vaishali", "West Champaran"], "Chandigarh": ["Chandigarh"], "Chhattisgarh": ["Balod", "Baloda Bazar", "Balrampur", "Bastar", "Bemetara", "Bijapur", "Bilaspur", "Dantewada", "Dhamtari", "Durg", "Gariaband", "Gaurela Pendra Marwahi", "Janjgir-Champa", "Jashpur", "Kanker", "Kawardha", "Kondagaon", "Korba", "Koriya", "Mahasamund", "Mungeli", "Narayanpur", "Raigarh", "Raipur", "Rajnandgaon", "Sukma", "Surajpur", "Surguja"], "Dadra and Nagar Haveli and Daman and Diu": ["Daman", "Diu", "Dadra and Nagar Haveli"], "Delhi": ["Central Delhi", "East Delhi", "New Delhi", "North Delhi", "North East Delhi", "North West Delhi", "Shahdara", "South Delhi", "South East Delhi", "South West Delhi", "West Delhi"], "Goa": ["North Goa", "South Goa"], "Gujarat": ["Ahmedabad", "Amreli", "Anand", "Aravalli", "Banaskantha", "Bharuch", "Bhavnagar", "Botad", "Chhota Udaipur", "Dahod", "Dang", "Devbhoomi Dwarka", "Gandhinagar", "Gir Somnath", "Jamnagar", "Junagadh", "Kheda", "Kutch", "Mahisagar", "Mehsana", "Morbi", "Narmada", "Navsari", "Panchmahal", "Patan", "Porbandar", "Rajkot", "Sabarkantha", "Surat", "Surendranagar", "Tapi", "Vadodara", "Valsad"], "Haryana": ["Ambala", "Bhiwani", "Charkhi Dadri", "Faridabad", "Fatehabad", "Gurugram", "Hisar", "Jhajjar", "Jind", "Kaithal", "Karnal", "Kurukshetra", "Mahendragarh", "Nuh", "Palwal", "Panchkula", "Panipat", "Rewari", "Rohtak", "Sirsa", "Sonipat", "Yamunanagar"], "Himachal Pradesh": ["Bilaspur", "Chamba", "Hamirpur", "Kangra", "Kinnaur", "Kullu", "Lahaul and Spiti", "Mandi", "Shimla", "Sirmaur", "Solan", "Una"], "Jammu and Kashmir": ["Anantnag", "Bandipora", "Baramulla", "Budgam", "Doda", "Ganderbal", "Jammu", "Kathua", "Kishtwar", "Kulgam", "Kupwara", "Poonch", "Pulwama", "Rajouri", "Ramban", "Reasi", "Samba", "Shopian", "Srinagar", "Udhampur"], "Jharkhand": ["Bokaro", "Chatra", "Deoghar", "Dhanbad", "Dumka", "East Singhbhum", "Garhwa", "Giridih", "Godda", "Gumla", "Hazaribagh", "Jamtara", "Khunti", "Koderma", "Latehar", "Lohardaga", "Pakur", "Palamu", "Ramgarh", "Ranchi", "Sahebganj", "Seraikela Kharsawan", "Simdega", "West Singhbhum"], "Karnataka": ["Bagalkot", "Ballari", "Belagavi", "Bengaluru Rural", "Bengaluru Urban", "Bidar", "Chamarajanagar", "Chikballapur", "Chikkamagaluru", "Chitradurga", "Dakshina Kannada", "Davanagere", "Dharwad", "Gadag", "Hassan", "Haveri", "Kalaburagi", "Kodagu", "Kolar", "Koppal", "Mandya", "Mysuru", "Raichur", "Ramanagara", "Shivamogga", "Tumakuru", "Udupi", "Uttara Kannada", "Vijayapura", "Yadgir"], "Kerala": ["Alappuzha", "Ernakulam", "Idukki", "Kannur", "Kasaragod", "Kollam", "Kottayam", "Kozhikode", "Malappuram", "Palakkad", "Pathanamthitta", "Thiruvananthapuram", "Thrissur", "Wayanad"], "Ladakh": ["Kargil", "Leh"], "Lakshadweep": ["Lakshadweep"], "Madhya Pradesh": ["Agar Malwa", "Alirajpur", "Anuppur", "Ashoknagar", "Balaghat", "Barwani", "Betul", "Bhind", "Bhopal", "Burhanpur", "Chhatarpur", "Chhindwara", "Damoh", "Datia", "Dewas", "Dhar", "Dindori", "Guna", "Gwalior", "Harda", "Hoshangabad", "Indore", "Jabalpur", "Jhabua", "Katni", "Khandwa", "Khargone", "Mandla", "Mandsaur", "Morena", "Narsinghpur", "Neemuch", "Panna", "Raisen", "Rajgarh", "Ratlam", "Rewa", "Sagar", "Satna", "Sehore", "Seoni", "Shahdol", "Shajapur", "Sheopur", "Shivpuri", "Sidhi", "Singrauli", "Tikamgarh", "Ujjain", "Umaria", "Vidisha"], "Maharashtra": ["Ahmednagar", "Akola", "Amravati", "Aurangabad", "Beed", "Bhandara", "Buldhana", "Chandrapur", "Dhule", "Gadchiroli", "Gondia", "Hingoli", "Jalgaon", "Jalna", "Kolhapur", "Latur", "Mumbai City", "Mumbai Suburban", "Nagpur", "Nanded", "Nandurbar", "Nashik", "Osmanabad", "Palghar", "Parbhani", "Pune", "Raigad", "Ratnagiri", "Sangli", "Satara", "Sindhudurg", "Solapur", "Thane", "Wardha", "Washim", "Yavatmal"], "Manipur": ["Bishnupur", "Chandel", "Churachandpur", "Imphal East", "Imphal West", "Jiribam", "Kakching", "Kamjong", "Kangpokpi", "Noney", "Pherzawl", "Senapati", "Tamenglong", "Tengnoupal", "Thoubal", "Ukhrul"], "Meghalaya": ["East Garo Hills", "East Jaintia Hills", "East Khasi Hills", "North Garo Hills", "Ri Bhoi", "South Garo Hills", "South West Garo Hills", "South West Khasi Hills", "West Garo Hills", "West Jaintia Hills", "West Khasi Hills"], "Mizoram": ["Aizawl", "Champhai", "Hnahthial", "Kolasib", "Lawngtlai", "Lunglei", "Mamit", "Saiha", "Saitual", "Serchhip"], "Nagaland": ["Dimapur", "Kiphire", "Kohima", "Longleng", "Mokokchung", "Mon", "Peren", "Phek", "Tuensang", "Wokha", "Zunheboto"], "Odisha": ["Angul", "Balangir", "Balasore", "Bargarh", "Bhadrak", "Boudh", "Cuttack", "Deogarh", "Dhenkanal", "Gajapati", "Ganjam", "Jagatsinghpur", "Jajpur", "Jharsuguda", "Kalahandi", "Kandhamal", "Kendrapara", "Kendujhar", "Khordha", "Koraput", "Malkangiri", "Mayurbhanj", "Nabarangpur", "Nayagarh", "Nuapada", "Puri", "Rayagada", "Sambalpur", "Sonepur", "Sundargarh"], "Puducherry": ["Karaikal", "Mahe", "Puducherry", "Yanam"], "Punjab": ["Amritsar", "Barnala", "Bathinda", "Faridkot", "Fatehgarh Sahib", "Fazilka", "Ferozepur", "Gurdaspur", "Hoshiarpur", "Jalandhar", "Kapurthala", "Ludhiana", "Mansa", "Moga", "Pathankot", "Patiala", "Rupnagar", "S.A.S. Nagar", "Sangrur", "Shahid Bhagat Singh Nagar", "Sri Muktsar Sahib", "Tarn Taran"], "Rajasthan": ["Ajmer", "Alwar", "Banswara", "Baran", "Barmer", "Bharatpur", "Bhilwara", "Bikaner", "Bundi", "Chittorgarh", "Churu", "Dausa", "Dholpur", "Dungarpur", "Hanumangarh", "Jaipur", "Jaisalmer", "Jalore", "Jhalawar", "Jhunjhunu", "Jodhpur", "Karauli", "Kota", "Nagaur", "Pali", "Pratapgarh", "Rajsamand", "Sawai Madhopur", "Sikar", "Sirohi", "Sri Ganganagar", "Tonk", "Udaipur"], "Sikkim": ["East Sikkim", "North Sikkim", "South Sikkim", "West Sikkim"], "Tamil Nadu": ["Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", "Dindigul", "Erode", "Kallakurichi", "Kanchipuram", "Kanyakumari", "Karur", "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris", "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga", "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli", "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore", "Viluppuram", "Virudhunagar"], "Telangana": ["Adilabad", "Bhadradri Kothagudem", "Hyderabad", "Jagtial", "Jangaon", "Jayashankar Bhupalpally", "Jogulamba Gadwal", "Kamareddy", "Karimnagar", "Khammam", "Komaram Bheem", "Mahabubabad", "Mahbubnagar", "Mancherial", "Medak", "Medchal-Malkajgiri", "Mulugu", "Nagarkurnool", "Nalgonda", "Narayanpet", "Nirmal", "Nizamabad", "Peddapalli", "Rajanna Sircilla", "Ranga Reddy", "Sangareddy", "Siddipet", "Suryapet", "Vikarabad", "Wanaparthy", "Warangal Rural", "Warangal Urban", "Yadadri Bhuvanagiri"], "Tripura": ["Dhalai", "Gomati", "Khowai", "North Tripura", "Sepahijala", "South Tripura", "Unakoti", "West Tripura"], "Uttar Pradesh": ["Agra", "Aligarh", "Ambedkar Nagar", "Amethi", "Amroha", "Auraiya", "Ayodhya", "Azamgarh", "Baghpat", "Bahraich", "Ballia", "Balrampur", "Banda", "Barabanki", "Bareilly", "Basti", "Bhadohi", "Bijnor", "Budaun", "Bulandshahr", "Chandauli", "Chitrakoot", "Deoria", "Etah", "Etawah", "Farrukhabad", "Fatehpur", "Firozabad", "Gautam Buddha Nagar", "Ghaziabad", "Ghazipur", "Gonda", "Gorakhpur", "Hamirpur", "Hapur", "Hardoi", "Hathras", "Jalaun", "Jaunpur", "Jhansi", "Kannauj", "Kanpur Dehat", "Kanpur Nagar", "Kasganj", "Kaushambi", "Kheri", "Kushinagar", "Lalitpur", "Lucknow", "Maharajganj", "Mahoba", "Mainpuri", "Mathura", "Mau", "Meerut", "Mirzapur", "Moradabad", "Muzaffarnagar", "Pilibhit", "Pratapgarh", "Prayagraj", "Raebareli", "Rampur", "Saharanpur", "Sambhal", "Sant Kabir Nagar", "Shahjahanpur", "Shamli", "Shravasti", "Siddharthnagar", "Sitapur", "Sonbhadra", "Sultanpur", "Unnao", "Varanasi"], "Uttarakhand": ["Almora", "Bageshwar", "Chamoli", "Champawat", "Dehradun", "Haridwar", "Nainital", "Pauri Garhwal", "Pithoragarh", "Rudraprayag", "Tehri Garhwal", "Udham Singh Nagar", "Uttarkashi"], "West Bengal": ["Alipurduar", "Bankura", "Birbhum", "Cooch Behar", "Dakshin Dinajpur", "Darjeeling", "Hooghly", "Howrah", "Jalpaiguri", "Jhargram", "Kalimpong", "Kolkata", "Malda", "Murshidabad", "Nadia", "North 24 Parganas", "Paschim Bardhaman", "Paschim Medinipur", "Purba Bardhaman", "Purba Medinipur", "Purulia", "South 24 Parganas", "Uttar Dinajpur"]
+            };
+            for (const state in stateDistrictData) {
+                const option = document.createElement('option');
+                option.value = state;
+                option.textContent = state;
+                stateSelect.appendChild(option);
             }
+            stateSelect.addEventListener('change', (e) => {
+                const selectedState = e.target.value;
+                districtSelect.innerHTML = '<option value="" disabled selected>Select District</option>';
+                if (selectedState) {
+                    districtSelect.disabled = false;
+                    const districts = stateDistrictData[selectedState];
+                    districts.forEach(district => {
+                        const option = document.createElement('option');
+                        option.value = district;
+                        option.textContent = district;
+                        districtSelect.appendChild(option);
+                    });
+                } else {
+                    districtSelect.disabled = true;
+                }
+            });
+
+            // FAQ Accordion
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                question.addEventListener('click', () => {
+                    const currentlyActive = document.querySelector('.faq-item.active');
+                    if (currentlyActive && currentlyActive !== item) {
+                        currentlyActive.classList.remove('active');
+                    }
+                    item.classList.toggle('active');
+                });
+            });
+            
+            // Show More FAQs
+            showMoreFaqsBtn.addEventListener('click', () => {
+                moreFaqsContainer.classList.remove('hidden');
+                showMoreFaqsBtn.classList.add('hidden');
+            });
+
+
+            // Back to Top Button
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.remove('hidden');
+                } else {
+                    backToTopButton.classList.add('hidden');
+                }
+            });
+            backToTopButton.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // Auth Modal
+            const openModal = () => authModal.classList.remove('hidden');
+            const closeModal = () => authModal.classList.add('hidden');
+
+            signinNavLinks.forEach(link => link.addEventListener('click', (e) => {
+                e.preventDefault();
+                openModal();
+            }));
+            closeModalButton.addEventListener('click', closeModal);
+            authModal.addEventListener('click', (e) => {
+                if (e.target === authModal) closeModal();
+            });
+
+            signinTab.addEventListener('click', () => {
+                signinTab.classList.add('border-indigo-500', 'text-white');
+                signinTab.classList.remove('text-gray-500');
+                signupTab.classList.remove('border-indigo-500', 'text-white');
+                signupTab.classList.add('text-gray-500');
+                signinForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+            });
+
+            signupTab.addEventListener('click', () => {
+                signupTab.classList.add('border-indigo-500', 'text-white');
+                signupTab.classList.remove('text-gray-500');
+                signinTab.classList.remove('border-indigo-500', 'text-white');
+                signinTab.classList.add('text-gray-500');
+                signupForm.classList.remove('hidden');
+                signinForm.classList.add('hidden');
+            });
+            
+            // Blog Modals
+            readMoreBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const modalId = btn.getAttribute('data-modal');
+                    document.getElementById(modalId).classList.remove('hidden');
+                });
+            });
+
+            closeBlogModalBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    btn.closest('.blog-modal').classList.add('hidden');
+                });
+            });
+            
+            blogModals.forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.add('hidden');
+                    }
+                });
+            });
         });
     </script>
 </body>
